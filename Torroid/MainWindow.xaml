@@ -11,4 +11,173 @@
     <Window.SystemBackdrop>
         <MicaBackdrop />
     </Window.SystemBackdrop>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="48" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Orientation="Horizontal" MinHeight="48" Grid.Row="0">
+            <!--<FontIcon Glyph="&#xE896;" Width="50" />-->
+            <BitmapIcon x:Name="DownloadManagerIcon" Width="50" ShowAsMonochrome="True" UriSource="ms-appx:///Assets/StoreLogo.png"/>
+            <TextBlock Text="XYZ Download Manager" VerticalAlignment="Center"/>
+        </StackPanel>
+
+
+        <!--Category View-->
+        <NavigationView x:Name="MainWindowNav" PaneDisplayMode="Left" IsSettingsVisible="True" Padding="25" Grid.Row="1">
+            <NavigationView.MenuItems>
+                <NavigationViewItem Content="All Downloads" Tag="SamplePage1" Icon="Folder">
+                    <NavigationViewItem.MenuItems>
+                        <NavigationViewItem Content="Compressed" ToolTipService.ToolTip="Mail" Tag="SamplePage3">
+                            <NavigationViewItem.Icon>
+                                <FontIcon Glyph="&#xF012;" />
+                            </NavigationViewItem.Icon>
+                        </NavigationViewItem>
+                        <NavigationViewItem Content="Document" Icon="Document" ToolTipService.ToolTip="Calendar" Tag="SamplePage4"/>
+                        <NavigationViewItem Content="Music" ToolTipService.ToolTip="Calendar" Tag="SamplePage4">
+                            <NavigationViewItem.Icon>
+                                <FontIcon Glyph="&#xEC4F;" />
+                            </NavigationViewItem.Icon>
+                        </NavigationViewItem>
+                        <NavigationViewItem Content="Program" ToolTipService.ToolTip="Calendar" Tag="SamplePage4">
+                            <NavigationViewItem.Icon>
+                                <FontIcon Glyph="&#xED35;" />
+                            </NavigationViewItem.Icon>
+                        </NavigationViewItem>
+                        <NavigationViewItem Content="Video" Icon="Video" ToolTipService.ToolTip="Calendar" Tag="SamplePage4"/>
+                    </NavigationViewItem.MenuItems>
+                </NavigationViewItem>
+                <NavigationViewItem Content="Unfinished" Tag="SamplePage2" Icon="UnSyncFolder">
+                    <NavigationViewItem.MenuItems>
+                        <NavigationViewItem Content="Compressed" Icon="ProtectedDocument" ToolTipService.ToolTip="Mail" Tag="SamplePage3"/>
+                        <NavigationViewItem Content="Document" Icon="Document" ToolTipService.ToolTip="Calendar" Tag="SamplePage4"/>
+                        <NavigationViewItem Content="Music" Icon="MusicInfo" ToolTipService.ToolTip="Calendar" Tag="SamplePage4"/>
+                        <NavigationViewItem Content="Program" Icon="AllApps" ToolTipService.ToolTip="Calendar" Tag="SamplePage4"/>
+                        <NavigationViewItem Content="Video" Icon="Video" ToolTipService.ToolTip="Calendar" Tag="SamplePage4"/>
+                    </NavigationViewItem.MenuItems>
+                </NavigationViewItem>
+                <NavigationViewItem Content="Finished" Tag="SamplePage2" >
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE930;" />
+                    </NavigationViewItem.Icon>
+
+                    <NavigationViewItem.MenuItems>
+                        <NavigationViewItem Content="Compressed" Icon="ProtectedDocument" ToolTipService.ToolTip="Mail" Tag="SamplePage3"/>
+                        <NavigationViewItem Content="Document" Icon="Document" ToolTipService.ToolTip="Calendar" Tag="SamplePage4"/>
+                        <NavigationViewItem Content="Music" Icon="MusicInfo" ToolTipService.ToolTip="Calendar" Tag="SamplePage4"/>
+                        <NavigationViewItem Content="Program" Icon="AllApps" ToolTipService.ToolTip="Calendar" Tag="SamplePage4"/>
+                        <NavigationViewItem Content="Video" Icon="Video" ToolTipService.ToolTip="Calendar" Tag="SamplePage4"/>
+                    </NavigationViewItem.MenuItems>
+                </NavigationViewItem>
+                <NavigationViewItem Content="Queues" Tag="SamplePage2" Icon="Clock">
+                    <NavigationViewItem.MenuItems>
+                        <NavigationViewItem Content="Main Download Queue" Icon="ProtectedDocument" ToolTipService.ToolTip="Mail" Tag="SamplePage3"/>
+                    </NavigationViewItem.MenuItems>
+                </NavigationViewItem>
+            </NavigationView.MenuItems>
+
+            <NavigationView.FooterMenuItems>
+                <NavigationViewItem Content="Donation" Tag="SamplePage5" Icon="Shop" />
+                <NavigationViewItem Content="Help" Tag="SamplePage5" Icon="Help" />
+            </NavigationView.FooterMenuItems>
+
+            <!--Frame-->
+            <Frame x:Name="MainWindowDownloadFilesFrame">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <MenuBar Grid.Column="0">
+                            <MenuBarItem Title="File" >
+                                <MenuFlyoutItem Text="New"/>
+                                <MenuFlyoutItem Text="Open..."/>
+                                <MenuFlyoutItem Text="Save"/>
+                                <MenuFlyoutItem Text="Exit"/>
+                            </MenuBarItem>
+
+                            <MenuBarItem Title="Edit">
+                                <MenuFlyoutItem Text="Undo"/>
+                                <MenuFlyoutItem Text="Cut"/>
+                                <MenuFlyoutItem Text="Copy"/>
+                                <MenuFlyoutItem Text="Paste"/>
+                            </MenuBarItem>
+
+                            <MenuBarItem Title="Help">
+                                <MenuFlyoutItem Text="About"/>
+                            </MenuBarItem>
+                        </MenuBar>
+                        <CommandBar Background="Transparent" IsOpen="False" DefaultLabelPosition="Right" Grid.Column="1">
+                            <AppBarButton Icon="Add" Label="Add"/>
+                            <AppBarButton Icon="Pause" Label="Pause"/>
+                            <AppBarButton Icon="Delete" Label="Delete"/>
+                            <CommandBar.SecondaryCommands>
+                                <AppBarButton Icon="Import" Label="Import">
+                                    <AppBarButton.KeyboardAccelerators>
+                                        <KeyboardAccelerator Modifiers="Control" Key="I" />
+                                    </AppBarButton.KeyboardAccelerators>
+                                </AppBarButton>
+                                <AppBarButton Icon="Import" Label="Export">
+                                    <AppBarButton.KeyboardAccelerators>
+                                        <KeyboardAccelerator Modifiers="Control" Key="E" />
+                                    </AppBarButton.KeyboardAccelerators>
+                                </AppBarButton>
+                                <AppBarButton Icon="Setting" Label="Settings">
+                                    <AppBarButton.KeyboardAccelerators>
+                                        <KeyboardAccelerator Modifiers="Control" Key="S" />
+                                    </AppBarButton.KeyboardAccelerators>
+                                </AppBarButton>
+                            </CommandBar.SecondaryCommands>
+                        </CommandBar>
+                    </Grid>
+
+
+                    <!--PageView-->
+
+                    <StackPanel Grid.Row="1">
+                        <Grid Background="{ThemeResource LayerOnMicaBaseAltFillColorDefault}" Margin="10,5" Padding="10,5" CornerRadius="10">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Row="0" Text="File Name" FontSize="16" TextWrapping="Wrap" Padding="0,5" />
+                            <TextBlock Grid.Row="0" Text="12 %" Grid.Column="1" FontSize="16" Padding="0,5" HorizontalAlignment="Right"/>
+                            <ProgressBar Grid.Row="1" Value="50" Grid.ColumnSpan="2" Minimum="0" Maximum="100" />
+                            <!--<Image Source="{Binding IsPlayingIcon}" />-->
+                            <Button Grid.Row="1" Grid.Column="2" Margin="5,0">
+                                <FontIcon Glyph="&#xF8AE;" />
+                            </Button>
+                            <Button Grid.Row="1" Grid.Column="3" Margin="5,0" >
+                                <FontIcon Glyph="&#xE711;"/>
+                            </Button>
+
+
+                            <!--<Button Content="Button" Click="Button_Click" AutomationProperties.Name="Pie" Grid.Row="1" Grid.Column="2">-->
+                            <!--<Image Source="/Assets/Slices.png" AutomationProperties.Name="Slice"/>-->
+                            <!--</Button>-->
+                            <TextBlock Grid.Row="2" Text="3.4 MB / 300MB" FontSize="14" Margin="0,0,0,0" Padding="0,5" />
+                            <TextBlock Grid.Row="2" Grid.Column="1" Text="300 MBps" FontSize="14" HorizontalAlignment="Right"/>
+                        </Grid>
+                    </StackPanel>
+                </Grid>
+
+            </Frame>
+        </NavigationView>
+
+    </Grid>
 </Window>
