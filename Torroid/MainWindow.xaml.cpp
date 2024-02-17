@@ -28,8 +28,27 @@ namespace winrt::Torroid::implementation
         winrt::Microsoft::UI::Windowing::AppWindowTitleBar titlebar = appWindow.TitleBar();
         titlebar.PreferredHeightOption(winrt::Microsoft::UI::Windowing::TitleBarHeightOption::Tall);
     }
-    void MainWindow::myButton_Click(IInspectable const&, RoutedEventArgs const&)
+
+    void MainWindow::addDownloadBtnClicked(IInspectable const&, RoutedEventArgs const&)
     {
-        myButton().Content(box_value(L"Clicked"));
+        winrt::Microsoft::UI::Xaml::Controls::ContentDialog dialog;
+        dialog.XamlRoot(Content().XamlRoot());
+        dialog.Title(winrt::box_value(L"Add Download Link"));
+        dialog.PrimaryButtonText(L"Add");
+        dialog.CloseButtonText(L"Cancel");
+        dialog.DefaultButton(winrt::Microsoft::UI::Xaml::Controls::ContentDialogButton::Primary);
+
+        dialog.Content();
+
+        dialog.PrimaryButtonClick([&](auto&& ...)
+            {
+                DispatcherQueue().TryEnqueue([&](auto&& ...)
+                   {
+                   });
+            });
+
+
+        dialog.ShowAsync();
+
     }
 }

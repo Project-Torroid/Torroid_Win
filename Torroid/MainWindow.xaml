@@ -116,7 +116,7 @@
                             </MenuBarItem>
                         </MenuBar>
                         <CommandBar Background="Transparent" IsOpen="False" DefaultLabelPosition="Right" Grid.Column="1">
-                            <AppBarButton Icon="Add" Label="Add"/>
+                            <AppBarButton Icon="Add" Label="Add" Click="addDownloadBtnClicked" />
                             <AppBarButton Icon="Pause" Label="Pause"/>
                             <AppBarButton Icon="Delete" Label="Delete"/>
                             <CommandBar.SecondaryCommands>
