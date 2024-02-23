@@ -54,7 +54,7 @@ DownloadFile::DownloadFile() {
     }
 }
 
-void DownloadFile::setupSession(aria2::KeyVals options, aria2::SessionConfig config) {
+void DownloadFile::setupSession() {
     // Create session object
     session = aria2::sessionNew(options, config);
 

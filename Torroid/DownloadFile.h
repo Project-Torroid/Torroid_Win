@@ -25,7 +25,7 @@ public:
 
     int StartDownload();
 
-    void DownloadFile::setupSession(aria2::KeyVals options, aria2::SessionConfig config);
+    void DownloadFile::setupSession();
 
     // Return number of active downloads
     int getSessionActiveDownloads();

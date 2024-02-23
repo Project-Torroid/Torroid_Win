@@ -52,7 +52,7 @@ namespace winrt::Torroid::implementation
                    {
                         DownloadFile dfile;
                         std::vector<std::string> vUrl = { winrt::to_string(urlBox.Text()) };
-                        
+                        dfile.setupSession();
                         dfile.addUrl(vUrl);
                         dfile.StartDownload();
                        
