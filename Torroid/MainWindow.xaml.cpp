@@ -4,6 +4,8 @@
 #include "MainWindow.g.cpp"
 #endif
 #include <winrt/Microsoft.UI.Windowing.h>
+#include <winrt/Windows.Storage.h>
+#include<DownloadFile.h>
 
 using namespace winrt;
 using namespace Microsoft::UI::Xaml;
@@ -38,12 +40,22 @@ namespace winrt::Torroid::implementation
         dialog.CloseButtonText(L"Cancel");
         dialog.DefaultButton(winrt::Microsoft::UI::Xaml::Controls::ContentDialogButton::Primary);
 
-        dialog.Content();
+        winrt::Microsoft::UI::Xaml::Controls::TextBox urlBox;
+        urlBox.PlaceholderText(L"Enter Direct Download Url");
+        dialog.Content(urlBox);
 
-        dialog.PrimaryButtonClick([&](auto&& ...)
+        /*auto appPath = Windows::Storage::ApplicationData::Current().LocalFolder().Path();*/
+
+        dialog.PrimaryButtonClick([this,urlBox = std::move(urlBox)](auto&& ...)
             {
-                DispatcherQueue().TryEnqueue([&](auto&& ...)
+                DispatcherQueue().TryEnqueue([this,urlBox = std::move(urlBox)](auto&& ...)
                    {
+                        DownloadFile dfile;
+                        std::vector<std::string> vUrl = { winrt::to_string(urlBox.Text()) };
+                        
+                        dfile.addUrl(vUrl);
+                        dfile.StartDownload();
+                       
                    });
             });
 
