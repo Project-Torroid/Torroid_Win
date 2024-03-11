@@ -11,8 +11,8 @@ namespace winrt::Torroid::implementation
         int32_t MyProperty();
         void MyProperty(int32_t value);
 
-        void MainWindow::addDownloadBtnClicked(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-
+        
+        void MainWindowNav_SelectionChanged(winrt::Microsoft::UI::Xaml::Controls::NavigationView const& sender, winrt::Microsoft::UI::Xaml::Controls::NavigationViewSelectionChangedEventArgs const& args);
     };
 }
 

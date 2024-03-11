@@ -6,6 +6,9 @@
 #include <winrt/Microsoft.UI.Windowing.h>
 #include <winrt/Windows.Storage.h>
 #include<DownloadFile.h>
+#include <SettingsPage.xaml.h>
+#include<winrt/Windows.UI.Xaml.Interop.h>
+#include <AllDownloads.xaml.h>
 
 using namespace winrt;
 using namespace Microsoft::UI::Xaml;
@@ -31,36 +34,13 @@ namespace winrt::Torroid::implementation
         titlebar.PreferredHeightOption(winrt::Microsoft::UI::Windowing::TitleBarHeightOption::Tall);
     }
 
-    void MainWindow::addDownloadBtnClicked(IInspectable const&, RoutedEventArgs const&)
+    void MainWindow::MainWindowNav_SelectionChanged(winrt::Microsoft::UI::Xaml::Controls::NavigationView const& sender, winrt::Microsoft::UI::Xaml::Controls::NavigationViewSelectionChangedEventArgs const& args)
     {
-        winrt::Microsoft::UI::Xaml::Controls::ContentDialog dialog;
-        dialog.XamlRoot(Content().XamlRoot());
-        dialog.Title(winrt::box_value(L"Add Download Link"));
-        dialog.PrimaryButtonText(L"Add");
-        dialog.CloseButtonText(L"Cancel");
-        dialog.DefaultButton(winrt::Microsoft::UI::Xaml::Controls::ContentDialogButton::Primary);
-
-        winrt::Microsoft::UI::Xaml::Controls::TextBox urlBox;
-        urlBox.PlaceholderText(L"Enter Direct Download Url");
-        dialog.Content(urlBox);
-
-        /*auto appPath = Windows::Storage::ApplicationData::Current().LocalFolder().Path();*/
-
-        dialog.PrimaryButtonClick([this,urlBox = std::move(urlBox)](auto&& ...)
-            {
-                DispatcherQueue().TryEnqueue([this,urlBox = std::move(urlBox)](auto&& ...)
-                   {
-                        DownloadFile dfile;
-                        std::vector<std::string> vUrl = { winrt::to_string(urlBox.Text()) };
-                        dfile.setupSession();
-                        dfile.addUrl(vUrl);
-                        dfile.StartDownload();
-                       
-                   });
-            });
-
-
-        dialog.ShowAsync();
+        if (args.IsSettingsSelected())
+        {
+            MainWindowDownloadFilesFrame().Navigate(xaml_typename<Torroid::SettingsPage>());
+        }
+        else MainWindowDownloadFilesFrame().Navigate(xaml_typename<Torroid::AllDownloads>());
 
     }
 }
