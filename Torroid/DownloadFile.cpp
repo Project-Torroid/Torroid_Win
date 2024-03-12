@@ -3,8 +3,10 @@
 
 #include <aria2/aria2.h>
 #include <vector>
+#include <sstream>
 #include <winrt/Windows.Storage.h>
-#include"logging.h"
+#include "logging.h"
+#include "json.h"
 
 int downloadEventCallback(aria2::Session* session, aria2::DownloadEvent event, const aria2::A2Gid& gid, void* userData)
 {
@@ -24,12 +26,14 @@ int downloadEventCallback(aria2::Session* session, aria2::DownloadEvent event, c
 }
 
 DownloadFile::DownloadFile() {
-    int iResult = aria2::libraryInit(); // Initialize aria2 dependencies
+    
+    // Initialize aria2 dependencies
+    int iResult = aria2::libraryInit();
     if (iResult)
     {
         Logging::Error("iResult: aria2 initionalisation error");
     }
-
+    
     // Set callback function which will be invoked when download event occurred
     config.downloadEventCallback = (aria2::DownloadEventCallback)downloadEventCallback;
 
@@ -73,7 +77,13 @@ int DownloadFile::addUrl(std::vector<std::string> uri)
         /*std::cerr << "Failed to add download" << uri[0] << std::endl;*/
         return EXIT_FAILURE;
     }
-    gids.push_back(gid);
+
+    // Add ne gid to gid vector
+    gids.insert(gids.begin(),gid);
+
+
+    jsonEntry.json::addDownloadToJson("filenme","67mb",uri[0]);
+
     return EXIT_SUCCESS;
 }
 
@@ -97,6 +107,34 @@ int DownloadFile::StartDownload()
 int DownloadFile::getSessionActiveDownloads()
 {
     return globalStat.numActive;
+}
+
+std::string DownloadFile::getDownloadFilename(int gidIndex)
+{
+    std::string substring;
+    std::vector<std::string> substrings; // string vector
+
+    aria2::DownloadHandle* handle = aria2::getDownloadHandle(session, gids[gidIndex]); // Get download handle of a particular download
+    aria2::FileData filedata = handle->getFile(1); // local Path of file going to download
+    aria2::deleteDownloadHandle(handle); // delete handle
+
+    std::istringstream iss(filedata.path);
+
+    // Seprate file name from full path
+    while (std::getline(iss, substring, '/'))
+    {
+        substrings.push_back(substring);
+    }
+
+    // Return file name if available
+    if (!substrings.empty())
+    {
+        return substrings.back();
+    }
+    else
+    {
+        return "No elements found in the path.";
+    }
 }
 
 int DownloadFile::getSessionDownloadSpeed()

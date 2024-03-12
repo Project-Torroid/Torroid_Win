@@ -1,25 +1,26 @@
 #pragma once
 
 #include<aria2/aria2.h>
+#include<json.h>
 
 class DownloadFile
 {
 private:
+    json jsonEntry;                 // Initialize json object
     aria2::Session* session;        // aria2 session object
     aria2::KeyVals options;         // aria2 options
     aria2::SessionConfig config;    // configuration for the session
     aria2::GlobalStat globalStat;   // Global statistics of current aria2 session
-    std::vector<aria2::A2Gid> gids; // unique gid per download 
+    std::vector<aria2::A2Gid> gids; // unique gid per download
 
 public:
     // constructor
     DownloadFile();
 
     /*
-     * Add new download url
-     * arguments:
-     * 1. New url to download file
-     * 2. Download index according to ui
+     Add new download url
+     Arguments:
+     1. vector containing urls
      */
     int DownloadFile::addUrl(std::vector<std::string> uri);
 
@@ -29,6 +30,9 @@ public:
 
     // Return number of active downloads
     int getSessionActiveDownloads();
+
+    // Return file name
+    std::string getDownloadFilename(int gidIndex);
 
     /*****************************************[ SPEED ]*****************************************/
 
@@ -54,4 +58,3 @@ public:
     int closeSession();
 
 };
-
