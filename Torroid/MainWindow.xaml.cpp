@@ -8,7 +8,7 @@
 #include<DownloadFile.h>
 #include <SettingsPage.xaml.h>
 #include<winrt/Windows.UI.Xaml.Interop.h>
-#include <AllDownloads.xaml.h>
+#include <winrt/Windows.UI.Xaml.Controls.h>
 
 using namespace winrt;
 using namespace Microsoft::UI::Xaml;
@@ -32,15 +32,32 @@ namespace winrt::Torroid::implementation
         winrt::Microsoft::UI::Windowing::AppWindow appWindow = AppWindow();
         winrt::Microsoft::UI::Windowing::AppWindowTitleBar titlebar = appWindow.TitleBar();
         titlebar.PreferredHeightOption(winrt::Microsoft::UI::Windowing::TitleBarHeightOption::Tall);
+        this->InitializeComponent();
+
+        // default selected item for Navigation
+        auto defaultNavSelection = MainWindowNav().MenuItems().GetAt(0).as<Controls::NavigationViewItem>();
+        MainWindowNav().SelectedItem(defaultNavSelection);
     }
 
-    void MainWindow::MainWindowNav_SelectionChanged(winrt::Microsoft::UI::Xaml::Controls::NavigationView const& sender, winrt::Microsoft::UI::Xaml::Controls::NavigationViewSelectionChangedEventArgs const& args)
+    void MainWindow::MainWindowNav_SelectionChanged(
+        Controls::NavigationView const& sender, 
+        Controls::NavigationViewSelectionChangedEventArgs const& args)
     {
         if (args.IsSettingsSelected())
         {
             MainWindowDownloadFilesFrame().Navigate(xaml_typename<Torroid::SettingsPage>());
         }
-        else MainWindowDownloadFilesFrame().Navigate(xaml_typename<Torroid::AllDownloads>());
+        else {
+
+            /* Navigate to AllDownloads for now
+            * TODO: Navigate to nav item's respective page when added as initial work is alredy done*/
+            auto selectedItem = args.SelectedItem().as<Controls::NavigationViewItem>();
+            winrt::hstring selectedItemTag = unbox_value<winrt::hstring>(selectedItem.Tag());
+            winrt::hstring pageName = L"Torroid.AllDownloads";
+            auto pageType = xaml_typename<Controls::Frame>();
+            pageType.Name = pageName;
+            MainWindowDownloadFilesFrame().Navigate(pageType);
+        }
 
     }
 }

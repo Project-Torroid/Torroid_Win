@@ -33,52 +33,51 @@
                         Grid.Row="1"
                         SelectionChanged="MainWindowNav_SelectionChanged">
             <NavigationView.MenuItems>
-                <NavigationViewItem Content="All Downloads" Tag="SamplePage1" Icon="Folder">
+                <NavigationViewItem Content="All Downloads" Tag="AllDownloads" Icon="Folder">
                     <NavigationViewItem.MenuItems>
-                        <NavigationViewItem Content="Compressed" ToolTipService.ToolTip="Mail" Tag="SamplePage3">
+                        <NavigationViewItem Content="Compressed" ToolTipService.ToolTip="Mail" Tag="AllCompressed">
                             <NavigationViewItem.Icon>
                                 <FontIcon Glyph="&#xF012;" />
                             </NavigationViewItem.Icon>
                         </NavigationViewItem>
-                        <NavigationViewItem Content="Document" Icon="Document" ToolTipService.ToolTip="Calendar" Tag="SamplePage4"/>
-                        <NavigationViewItem Content="Music" ToolTipService.ToolTip="Calendar" Tag="SamplePage4">
+                        <NavigationViewItem Content="Document" Icon="Document" ToolTipService.ToolTip="Calendar" Tag="AllDocument"/>
+                        <NavigationViewItem Content="Music" ToolTipService.ToolTip="Calendar" Tag="AllMusic">
                             <NavigationViewItem.Icon>
                                 <FontIcon Glyph="&#xEC4F;" />
                             </NavigationViewItem.Icon>
                         </NavigationViewItem>
-                        <NavigationViewItem Content="Program" ToolTipService.ToolTip="Calendar" Tag="SamplePage4">
+                        <NavigationViewItem Content="Program" ToolTipService.ToolTip="Calendar" Tag="AllProgram">
                             <NavigationViewItem.Icon>
                                 <FontIcon Glyph="&#xED35;" />
                             </NavigationViewItem.Icon>
                         </NavigationViewItem>
-                        <NavigationViewItem Content="Video" Icon="Video" ToolTipService.ToolTip="Calendar" Tag="SamplePage4"/>
+                        <NavigationViewItem Content="Video" Icon="Video" ToolTipService.ToolTip="Calendar" Tag="AllVideo"/>
                     </NavigationViewItem.MenuItems>
                 </NavigationViewItem>
-                <NavigationViewItem Content="Unfinished" Tag="SamplePage2" Icon="UnSyncFolder">
+                <NavigationViewItem Content="Unfinished" Tag="Unfinished" Icon="UnSyncFolder">
                     <NavigationViewItem.MenuItems>
-                        <NavigationViewItem Content="Compressed" Icon="ProtectedDocument" ToolTipService.ToolTip="Mail" Tag="SamplePage3"/>
-                        <NavigationViewItem Content="Document" Icon="Document" ToolTipService.ToolTip="Calendar" Tag="SamplePage4"/>
-                        <NavigationViewItem Content="Music" Icon="MusicInfo" ToolTipService.ToolTip="Calendar" Tag="SamplePage4"/>
-                        <NavigationViewItem Content="Program" Icon="AllApps" ToolTipService.ToolTip="Calendar" Tag="SamplePage4"/>
-                        <NavigationViewItem Content="Video" Icon="Video" ToolTipService.ToolTip="Calendar" Tag="SamplePage4"/>
+                        <NavigationViewItem Content="Compressed" Icon="ProtectedDocument" ToolTipService.ToolTip="Mail" Tag="UnfCompressed"/>
+                        <NavigationViewItem Content="Document" Icon="Document" ToolTipService.ToolTip="Calendar" Tag="UnfDocument"/>
+                        <NavigationViewItem Content="Music" Icon="MusicInfo" ToolTipService.ToolTip="Calendar" Tag="UnfMusic"/>
+                        <NavigationViewItem Content="Program" Icon="AllApps" ToolTipService.ToolTip="Calendar" Tag="UnfProgram"/>
+                        <NavigationViewItem Content="Video" Icon="Video" ToolTipService.ToolTip="Calendar" Tag="UnfVideo"/>
                     </NavigationViewItem.MenuItems>
                 </NavigationViewItem>
                 <NavigationViewItem Content="Finished" Tag="SamplePage2" >
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE930;" />
                     </NavigationViewItem.Icon>
-
                     <NavigationViewItem.MenuItems>
-                        <NavigationViewItem Content="Compressed" Icon="ProtectedDocument" ToolTipService.ToolTip="Mail" Tag="SamplePage3"/>
-                        <NavigationViewItem Content="Document" Icon="Document" ToolTipService.ToolTip="Calendar" Tag="SamplePage4"/>
-                        <NavigationViewItem Content="Music" Icon="MusicInfo" ToolTipService.ToolTip="Calendar" Tag="SamplePage4"/>
-                        <NavigationViewItem Content="Program" Icon="AllApps" ToolTipService.ToolTip="Calendar" Tag="SamplePage4"/>
-                        <NavigationViewItem Content="Video" Icon="Video" ToolTipService.ToolTip="Calendar" Tag="SamplePage4"/>
+                        <NavigationViewItem Content="Compressed" Icon="ProtectedDocument" ToolTipService.ToolTip="Mail" Tag="FCompressed"/>
+                        <NavigationViewItem Content="Document" Icon="Document" ToolTipService.ToolTip="Calendar" Tag="FDocument"/>
+                        <NavigationViewItem Content="Music" Icon="MusicInfo" ToolTipService.ToolTip="Calendar" Tag="FMusic"/>
+                        <NavigationViewItem Content="Program" Icon="AllApps" ToolTipService.ToolTip="Calendar" Tag="FProgram"/>
+                        <NavigationViewItem Content="Video" Icon="Video" ToolTipService.ToolTip="Calendar" Tag="FVideo"/>
                     </NavigationViewItem.MenuItems>
                 </NavigationViewItem>
                 <NavigationViewItem Content="Queues" Tag="SamplePage2" Icon="Clock">
                     <NavigationViewItem.MenuItems>
-                        <NavigationViewItem Content="Main Download Queue" Icon="ProtectedDocument" ToolTipService.ToolTip="Mail" Tag="SamplePage3"/>
+                        <NavigationViewItem Content="Main Download Queue" Icon="ProtectedDocument" ToolTipService.ToolTip="Mail" Tag="QMain"/>
                     </NavigationViewItem.MenuItems>
                 </NavigationViewItem>
             </NavigationView.MenuItems>
