@@ -5,6 +5,7 @@
 #include <vector>
 #include <sstream>
 #include <winrt/Windows.Storage.h>
+#include <future>
 #include "logging.h"
 #include "json.h"
 
@@ -126,35 +127,38 @@ int DownloadFile::ResumeDownload(int gidIndex)
 
 int DownloadFile::getSessionActiveDownloads()
 {
-    return globalStat.numActive;
+    //return globalStat.numActive;
+    std::async(std::launch::async, [=] { return globalStat.numActive;}); // async
 }
 
 std::string DownloadFile::getDownloadFilename(int gidIndex)
-{
-    std::string substring;
-    std::vector<std::string> substrings; // string vector
+{   
+    std::async(std::launch::async, [=] {  
+        std::string substring;
+        std::vector<std::string> substrings; // string vector
 
-    aria2::DownloadHandle* handle = aria2::getDownloadHandle(session, gids[gidIndex]); // Get download handle of a particular download
-    aria2::FileData filedata = handle->getFile(1); // local Path of file going to download
-    aria2::deleteDownloadHandle(handle); // delete handle
+        aria2::DownloadHandle* handle = aria2::getDownloadHandle(session, gids[gidIndex]); // Get download handle of a particular download
+        aria2::FileData filedata = handle->getFile(1); // local Path of file going to download
+        aria2::deleteDownloadHandle(handle); // delete handle
 
-    std::istringstream iss(filedata.path);
+        std::istringstream iss(filedata.path);
 
-    // Seprate file name from full path
-    while (std::getline(iss, substring, '/'))
-    {
-        substrings.push_back(substring);
-    }
+        // Seprate file name from full path
+        while (std::getline(iss, substring, '/'))
+        {
+            substrings.push_back(substring);
+        }
 
-    // Return file name if available
-    if (!substrings.empty())
-    {
-        return substrings.back();
-    }
-    else
-    {
-        return "No elements found in the path.";
-    }
+        // Return file name if available
+        if (!substrings.empty())
+        {
+            return substrings.back();
+        }
+        else
+        {
+            return "No elements found in the path.";
+        }
+    });
 }
 
 int DownloadFile::getSessionDownloadSpeed()
