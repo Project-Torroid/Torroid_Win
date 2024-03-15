@@ -31,7 +31,7 @@ public:
     int StartDownload();
 
 
-    /*----------------------------------[ PAUSE ,RESUME AND CANCEL ]----------------------------------*/
+    /*-------------------------------[ PAUSE ,RESUME AND CANCEL ]-------------------------------*/
 
     /*
      Pause Download of given GID
