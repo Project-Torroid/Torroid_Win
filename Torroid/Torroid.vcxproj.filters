@@ -16,11 +16,13 @@
     <ClCompile Include="$(GeneratedFilesDir)module.g.cpp" />
     <ClCompile Include="DownloadFile.cpp" />
     <ClCompile Include="logging.cpp" />
+    <ClCompile Include="json.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
     <ClInclude Include="DownloadFile.h" />
     <ClInclude Include="logging.h" />
+    <ClInclude Include="json.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Wide310x150Logo.scale-200.png">

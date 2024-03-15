@@ -124,6 +124,7 @@ sqlite3.lib
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="DownloadFile.h" />
+    <ClInclude Include="json.h" />
     <ClInclude Include="logging.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="App.xaml.h">
@@ -153,6 +154,7 @@ sqlite3.lib
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="DownloadFile.cpp" />
+    <ClCompile Include="json.cpp" />
     <ClCompile Include="logging.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
