@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "App.xaml.h"
 #include "MainWindow.xaml.h"
+#include "DownloadFile.h"
 
 using namespace winrt;
 using namespace Microsoft::UI::Xaml;
@@ -39,5 +40,14 @@ namespace winrt::Torroid::implementation
     {
         window = make<MainWindow>();
         window.Activate();
+
+        //Download session setup
+        DownloadFile::DownloadInstance().setupSession();
+
+        // Start Download in seprate thread
+        std::thread DownloadThread([]{
+            DownloadFile::DownloadInstance().StartDownload();
+            });
+        DownloadThread.detach();
     }
 }

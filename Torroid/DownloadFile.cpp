@@ -1,11 +1,9 @@
 #include "pch.h"
 #include "DownloadFile.h"
-
 #include <aria2/aria2.h>
 #include <vector>
 #include <sstream>
 #include <winrt/Windows.Storage.h>
-#include <future>
 #include "logging.h"
 #include "json.h"
 
@@ -26,6 +24,8 @@ int downloadEventCallback(aria2::Session* session, aria2::DownloadEvent event, c
     return 0;
 }
 
+DownloadFile* DownloadFile::instance_ = nullptr;
+
 DownloadFile::DownloadFile() {
     
     // Initialize aria2 dependencies
@@ -37,6 +37,7 @@ DownloadFile::DownloadFile() {
     
     // Set callback function which will be invoked when download event occurred
     config.downloadEventCallback = (aria2::DownloadEventCallback)downloadEventCallback;
+    config.keepRunning = true;
 
     // Downloads Folder Path
     auto dFolder = winrt::Windows::Storage::KnownFolders::GetFolderForUserAsync(nullptr, winrt::Windows::Storage::KnownFolderId::DownloadsFolder).get();
@@ -59,15 +60,36 @@ DownloadFile::DownloadFile() {
     }
 }
 
-void DownloadFile::setupSession() {
+DownloadFile& DownloadFile::DownloadInstance() {
+    if (instance_ == nullptr) {
+        instance_ = new DownloadFile();
+    }
+    return *instance_;
+}
+
+IAsyncAction DownloadFile::setupSession() {
     // Create session object
     session = aria2::sessionNew(options, config);
 
     // Global statistics of current aria2 session
     globalStat = aria2::getGlobalStat(session);
+    return 0;
 }
 
-int DownloadFile::addUrl(std::vector<std::string> uri)
+void DownloadFile::StartDownload()
+{
+    while (true)
+    {
+        int iResult = aria2::run(session, aria2::RUN_ONCE);
+        
+        if (iResult != 1)
+        {
+            break;
+        }
+    }
+}
+
+IAsyncAction DownloadFile::addUrl(std::vector<std::string> uri)
 {
     aria2::A2Gid gid;
 
@@ -76,33 +98,17 @@ int DownloadFile::addUrl(std::vector<std::string> uri)
     if (iResult < 0)
     {
         /*std::cerr << "Failed to add download" << uri[0] << std::endl;*/
-        return EXIT_FAILURE;
+        
     }
 
     // Add ne gid to gid vector
     gids.insert(gids.begin(),gid);
 
-    jsonEntry.json::addDownloadToJson("filenme","67mb",uri[0]);
-    DownloadFile::ResumeDownload(0);
+     //co_await updateJsonAndUI(gid, uri[0]);
+    //jsonEntry.json::addDownloadToJson("filenme","67mb",uri[0]);
+    //DownloadFile::ResumeDownload(0);
 
-    return EXIT_SUCCESS;
-}
-
-int DownloadFile::StartDownload()
-{
-    int size = 0, size1 = 0;
-    while (true)
-    {
-        int iResult = aria2::run(session, aria2::RUN_ONCE);
-        size = getDownloadedSize(0);
-        // size1 = getDownloadedSize(1);
-        /*std::cout << "d1 -> " << size << " d0 -> " << size1 << std::endl;*/
-        if (iResult != 1)
-        {
-            break;
-        }
-    }
-    return EXIT_SUCCESS;
+    return 0;
 }
 
 int DownloadFile::pause(int gidIndex)
@@ -128,38 +134,81 @@ int DownloadFile::ResumeDownload(int gidIndex)
 int DownloadFile::getSessionActiveDownloads()
 {
     //return globalStat.numActive;
-    std::async(std::launch::async, [=] { return globalStat.numActive;}); // async
+    return globalStat.numActive;
 }
 
-std::string DownloadFile::getDownloadFilename(int gidIndex)
+IAsyncAction DownloadFile::updateJsonAndUI(aria2::A2Gid gid, std::string url)
 {   
-    std::async(std::launch::async, [=] {  
-        std::string substring;
-        std::vector<std::string> substrings; // string vector
+    std::string substring;
+    std::vector<std::string> substrings; // string vector
+    bool getinfo = false;
+    aria2::DownloadHandle* handle; 
+    std::string size;
 
-        aria2::DownloadHandle* handle = aria2::getDownloadHandle(session, gids[gidIndex]); // Get download handle of a particular download
-        aria2::FileData filedata = handle->getFile(1); // local Path of file going to download
+    while (!getinfo){
+        handle = aria2::getDownloadHandle(session, gid); // Get download handle of a particular download
+        if (handle->getTotalLength() != 0) {
+            getinfo = true;
+        }
         aria2::deleteDownloadHandle(handle); // delete handle
 
-        std::istringstream iss(filedata.path);
+    }
+    handle = aria2::getDownloadHandle(session, gid); // Get download handle of a particular download
 
-        // Seprate file name from full path
-        while (std::getline(iss, substring, '/'))
-        {
-            substrings.push_back(substring);
-        }
+    aria2::FileData filedata = handle->getFile(1); // local Path of file going to download
+    size = handle->getTotalLength(); // file total size
 
-        // Return file name if available
-        if (!substrings.empty())
-        {
-            return substrings.back();
-        }
-        else
-        {
-            return "No elements found in the path.";
-        }
-    });
+    aria2::deleteDownloadHandle(handle); // delete handle
+
+    std::istringstream iss(filedata.path);
+
+    // Seprate file name from full path
+    while (std::getline(iss, substring, '/'))
+    {
+        substrings.push_back(substring);
+    }
+    jsonEntry.json::addDownloadToJson(substrings.back(), size, url);
+
+    //// Return file name if available
+    //if (!substrings.empty())
+    //{
+    //    return substrings.back();
+    //}
+    //else
+    //{
+    //    return "No elements found in the path.";
+    //}
+    return EXIT_SUCCESS;
 }
+
+//std::string DownloadFile::getDownloadFilename(int gidIndex)
+//{   
+//    std::string substring;
+//    std::vector<std::string> substrings; // string vector
+//
+//    aria2::DownloadHandle* handle = aria2::getDownloadHandle(session, gids[gidIndex]); // Get download handle of a particular download
+//    aria2::FileData filedata = handle->getFile(1); // local Path of file going to download
+//    aria2::deleteDownloadHandle(handle); // delete handle
+//
+//    std::istringstream iss(filedata.path);
+//
+//    // Seprate file name from full path
+//    while (std::getline(iss, substring, '/'))
+//    {
+//        substrings.push_back(substring);
+//    }
+//
+//    // Return file name if available
+//    if (!substrings.empty())
+//    {
+//        return substrings.back();
+//    }
+//    else
+//    {
+//        return "No elements found in the path.";
+//    }
+//    
+//}
 
 int DownloadFile::getSessionDownloadSpeed()
 {
@@ -189,8 +238,6 @@ int DownloadFile::getDownloadedSize(int gidIndex)
     aria2::deleteDownloadHandle(handle);
     return length;
 }
-
-/*************************************[ DOWNLOAD DIRECTORY ]*************************************/
 
 // Return download directory of file to download
 std::string DownloadFile::getDownloadDir(int gidIndex)

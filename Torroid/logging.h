@@ -15,7 +15,4 @@ public:
     // log warning in files:
    static void warning(std::string message);
 
-    // for buddy 
-   static void ForBuddy(std::string message);
-
 };

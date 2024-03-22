@@ -5,7 +5,6 @@
 #endif
 #include <winrt/Microsoft.UI.Windowing.h>
 #include <winrt/Windows.Storage.h>
-#include<DownloadFile.h>
 #include <SettingsPage.xaml.h>
 #include<winrt/Windows.UI.Xaml.Interop.h>
 #include <winrt/Windows.UI.Xaml.Controls.h>

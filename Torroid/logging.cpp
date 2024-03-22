@@ -7,9 +7,9 @@
 #include <sstream>
 #include "logging.h"
 
-std::string LogFilePath = "C:\\Users\\hraj9\\OneDrive\\Desktop\\torroid.log";
+std::string LogFilePath = "C:\\test\\torroid.log";
 
- std::string Logging::current_datetime() {
+std::string Logging::current_datetime() {
     std::time_t now = std::time(nullptr);
     std::tm now_tm;
 
@@ -24,32 +24,27 @@ std::string LogFilePath = "C:\\Users\\hraj9\\OneDrive\\Desktop\\torroid.log";
     return oss.str();
 }
 
-    void Logging::Error(std::string message)
+void Logging::Error(std::string message)
 {
     std::ofstream loggingfile(LogFilePath,  std::ios::app);
     loggingfile << "[-] " << current_datetime() << " " << message << std::endl;
     loggingfile.close();
 }
 
-    void Logging::Info(std::string message)
+void Logging::Info(std::string message)
 {
     std::ofstream loggingfile(LogFilePath, std::ios::app);
     loggingfile << "[i] " << current_datetime() << " " << message << std::endl;
     loggingfile.close();
 }
 
-    void Logging::warning( std::string message)
+void Logging::warning( std::string message)
 {
     std::ofstream loggingfile(LogFilePath, std::ios::app);
     loggingfile << "[W] " << current_datetime() << " " << message << std::endl;
     loggingfile.close();
 }
-    void Logging::ForBuddy( std::string message)
-{
-    std::ofstream loggingfile(LogFilePath, std::ios::app);
-    loggingfile << "[F] " << current_datetime() << " " << message << std::endl;
-    loggingfile.close();
-}
+
 
 
 
