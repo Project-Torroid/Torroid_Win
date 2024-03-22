@@ -4,7 +4,7 @@
 #include "AllDownloads.g.cpp"
 #endif
 
-#include<DownloadFile.h>
+#include "DownloadFile.h"
 
 using namespace winrt;
 using namespace Microsoft::UI::Xaml;
@@ -40,17 +40,17 @@ namespace winrt::Torroid::implementation
         /*auto appPath = Windows::Storage::ApplicationData::Current().LocalFolder().Path();*/
 
         dialog.PrimaryButtonClick([this, urlBox = std::move(urlBox)](auto&& ...)
+        {
+            DispatcherQueue().TryEnqueue([this, urlBox = std::move(urlBox)](auto&& ...)
             {
-                DispatcherQueue().TryEnqueue([this, urlBox = std::move(urlBox)](auto&& ...)
-                    {
-                        DownloadFile dfile;
-                        std::vector<std::string> vUrl = { winrt::to_string(urlBox.Text()) };
-                        dfile.setupSession();
-                        dfile.addUrl(vUrl);
-                        dfile.StartDownload();
+                
+                std::vector<std::string> vUrl = { winrt::to_string(urlBox.Text()) };
+                
+                // Add Download
+                DownloadFile::DownloadInstance().addUrl(vUrl);
 
-                    });
             });
+        });
 
 
         dialog.ShowAsync();
