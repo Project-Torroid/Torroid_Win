@@ -41,13 +41,15 @@ namespace winrt::Torroid::implementation
         window = make<MainWindow>();
         window.Activate();
 
-        //Download session setup
-        DownloadFile::DownloadInstance().setupSession();
-
         // Start Download in seprate thread
-        std::thread DownloadThread([]{
+        std::thread DownloadThread([] {
+            winrt::init_apartment();
+
+            //Download session setup
+            DownloadFile::DownloadInstance().setupSession();
             DownloadFile::DownloadInstance().StartDownload();
             });
         DownloadThread.detach();
+
     }
 }
