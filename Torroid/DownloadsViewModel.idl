@@ -1,0 +1,12 @@
+import "Downloads.idl";
+
+namespace Torroid
+{
+    runtimeclass DownloadsViewModel
+    {
+        DownloadsViewModel();
+        Downloads Downloads{ get; };
+
+        Windows.Foundation.Collections.IObservableVector<Downloads> DownloadsOBVector{ get; };
+    }
+}

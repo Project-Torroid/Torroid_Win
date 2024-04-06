@@ -10,6 +10,8 @@
   </ItemGroup>
   <ItemGroup>
     <Midl Include="MainWindow.idl" />
+    <Midl Include="Downloads.idl" />
+    <Midl Include="DownloadsViewModel.idl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -17,12 +19,16 @@
     <ClCompile Include="DownloadFile.cpp" />
     <ClCompile Include="logging.cpp" />
     <ClCompile Include="json.cpp" />
+    <ClCompile Include="Downloads.cpp" />
+    <ClCompile Include="DownloadsViewModel.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
     <ClInclude Include="DownloadFile.h" />
     <ClInclude Include="logging.h" />
     <ClInclude Include="json.h" />
+    <ClInclude Include="Downloads.h" />
+    <ClInclude Include="DownloadsViewModel.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Wide310x150Logo.scale-200.png">

@@ -1,9 +1,12 @@
+import "DownloadsViewModel.idl";
+
 namespace Torroid
 {
     [default_interface]
     runtimeclass AllDownloads : Microsoft.UI.Xaml.Controls.Page
     {
         AllDownloads();
-        Int32 MyProperty;
+
+        DownloadsViewModel MainViewModel{ get; };
     }
 }

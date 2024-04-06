@@ -124,6 +124,8 @@ sqlite3.lib
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="DownloadFile.h" />
+    <ClInclude Include="Downloads.h" />
+    <ClInclude Include="DownloadsViewModel.h" />
     <ClInclude Include="json.h" />
     <ClInclude Include="logging.h" />
     <ClInclude Include="pch.h" />
@@ -154,6 +156,8 @@ sqlite3.lib
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="DownloadFile.cpp" />
+    <ClCompile Include="Downloads.cpp" />
+    <ClCompile Include="DownloadsViewModel.cpp" />
     <ClCompile Include="json.cpp" />
     <ClCompile Include="logging.cpp" />
     <ClCompile Include="pch.cpp">
@@ -176,6 +180,8 @@ sqlite3.lib
       <DependentUpon>AllDownloads.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
+    <Midl Include="Downloads.idl" />
+    <Midl Include="DownloadsViewModel.idl" />
     <Midl Include="MainWindow.idl">
       <SubType>Code</SubType>
       <DependentUpon>MainWindow.xaml</DependentUpon>

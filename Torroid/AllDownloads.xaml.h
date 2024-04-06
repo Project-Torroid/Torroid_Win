@@ -1,21 +1,21 @@
 #pragma once
 
 #include "AllDownloads.g.h"
+#include "DownloadsViewModel.h"
 
 namespace winrt::Torroid::implementation
 {
     struct AllDownloads : AllDownloadsT<AllDownloads>
     {
-        AllDownloads()
-        {
-            // Xaml objects should not call InitializeComponent during construction.
-            // See https://github.com/microsoft/cppwinrt/tree/master/nuget#initializecomponent
-        }
+        AllDownloads();
 
-        int32_t MyProperty();
-        void MyProperty(int32_t value);
+        Torroid::DownloadsViewModel MainViewModel();
+
         void AllDownloads::addDownloadBtnClicked(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
 
+        void AdditemtoLV(Windows::Foundation::IInspectable const&, Microsoft::UI::Xaml::RoutedEventArgs const&);
+    private:
+        Torroid::DownloadsViewModel m_mainViewModel;
     };
 }
 

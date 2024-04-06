@@ -1,0 +1,8 @@
+namespace Torroid
+{
+    runtimeclass Downloads : Windows.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        Downloads(String fileName);
+        String FileName;
+    }
+}

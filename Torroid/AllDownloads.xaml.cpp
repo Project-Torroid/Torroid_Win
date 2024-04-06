@@ -5,23 +5,34 @@
 #endif
 
 #include "DownloadFile.h"
+#include <winrt/Windows.Foundation.h>
 
 using namespace winrt;
 using namespace Microsoft::UI::Xaml;
+using namespace Windows::Foundation::Collections;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
 namespace winrt::Torroid::implementation
 {
-    int32_t AllDownloads::MyProperty()
-    {
-        throw hresult_not_implemented();
+    AllDownloads::AllDownloads() {
+        InitializeComponent();
+
+
+        // Set up your ListView
+        //BaseExample().ItemsSource(m_viewModel.Downloads());
     }
 
-    void AllDownloads::MyProperty(int32_t /* value */)
+    void AllDownloads::AdditemtoLV(Windows::Foundation::IInspectable const&, Microsoft::UI::Xaml::RoutedEventArgs const&) 
     {
-        throw hresult_not_implemented();
+        MainViewModel().Downloads().FileName(L"To Kill a Mockingbird");
+        MainViewModel().DownloadsOBVector().Append(winrt::make<Torroid::implementation::Downloads>(L"Moby Dick.jpg"));
+    }
+
+    Torroid::DownloadsViewModel AllDownloads::MainViewModel()
+    {
+        return m_mainViewModel;
     }
 
     void AllDownloads::addDownloadBtnClicked(IInspectable const&, RoutedEventArgs const&)
