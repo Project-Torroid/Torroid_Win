@@ -21,7 +21,7 @@ namespace winrt::Torroid::implementation
 
 
         // Set up your ListView
-        //BaseExample().ItemsSource(m_viewModel.Downloads());
+        BaseExample().ItemsSource(MainViewModel().DownloadsOBVector());
     }
 
     void AllDownloads::AdditemtoLV(Windows::Foundation::IInspectable const&, Microsoft::UI::Xaml::RoutedEventArgs const&) 

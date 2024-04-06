@@ -2,6 +2,10 @@
 #include "Downloads.h"
 #include "Downloads.g.cpp"
 
+using namespace winrt;
+using namespace Microsoft::UI::Xaml;
+using namespace Microsoft::UI::Xaml::Data;
+
 namespace winrt::Torroid::implementation
 {
     Downloads::Downloads(hstring const& fileName) : m_fileName{ fileName }
@@ -17,10 +21,10 @@ namespace winrt::Torroid::implementation
         if (m_fileName != value)
         {
             m_fileName = value;
-            m_propertyChanged(*this, Windows::UI::Xaml::Data::PropertyChangedEventArgs{ L"FileName" });
+            m_propertyChanged(*this, PropertyChangedEventArgs{ L"FileName" });
         }
     }
-    winrt::event_token Downloads::PropertyChanged(winrt::Windows::UI::Xaml::Data::PropertyChangedEventHandler const& handler)
+    winrt::event_token Downloads::PropertyChanged(PropertyChangedEventHandler const& handler)
     {
         return m_propertyChanged.add(handler);
     }
