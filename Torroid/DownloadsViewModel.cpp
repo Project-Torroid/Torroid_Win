@@ -9,9 +9,7 @@ namespace winrt::Torroid::implementation
 {
     DownloadsViewModel::DownloadsViewModel()
     {
-        m_downloads = make<Torroid::implementation::Downloads>(L"Hello World.mp4");
         m_downloadsOBVector = single_threaded_observable_vector<Torroid::Downloads>();
-        m_downloadsOBVector.Append(m_downloads);
     }
 
     Torroid::Downloads DownloadsViewModel::Downloads() {
