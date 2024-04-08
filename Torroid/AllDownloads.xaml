@@ -10,8 +10,7 @@
 
     <Page.Resources>
         <DataTemplate x:Key="DownlodsListViewTemplate" x:DataType="local:Downloads">
-            <TextBlock Text="{x:Bind FileName}" FontSize="16" TextWrapping="Wrap" Padding="0,5" />
-            <!--<Grid Background="{ThemeResource LayerOnMicaBaseAltFillColorDefault}" Margin="0,5" Padding="10,5" CornerRadius="10">
+            <Grid Background="{ThemeResource LayerOnMicaBaseAltFillColorDefault}" Margin="0,5" Padding="10,5" CornerRadius="10">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
@@ -24,31 +23,31 @@
                     <ColumnDefinition Width="auto"/>
                 </Grid.ColumnDefinitions>
                 
-                File Name
-                <TextBlock Grid.Row="0" Text="File Name" FontSize="16" TextWrapping="Wrap" Padding="0,5" />
+                <!--File Name-->
+                <TextBlock Grid.Row="0" Text="{x:Bind FileName}" FontSize="16" TextWrapping="Wrap" Padding="0,5" />
                 
-                File Percentage
-                <TextBlock Grid.Row="0" Text="12 %" Grid.Column="1" FontSize="16" Padding="0,5" HorizontalAlignment="Right"/>
+                <!--File Percentage-->
+                <TextBlock Grid.Row="0" Text="{x:Bind Percentage}" Grid.Column="1" FontSize="16" Padding="0,5" HorizontalAlignment="Right"/>
                 
-                Progress Bar
-                <ProgressBar Grid.Row="1" Value="50" Grid.ColumnSpan="2" Minimum="0" Maximum="100" />
+                <!--Progress Bar-->
+                <ProgressBar Grid.Row="1" Value="{x:Bind DPercentage}" Grid.ColumnSpan="2" Minimum="0" Maximum="100" />
                 
-                Play/Pause Button
+                <!--Play/Pause Download Button-->
                 <Button Grid.Row="1" Grid.Column="2" Margin="5,0">
                     <FontIcon Glyph="&#xF8AE;" />
                 </Button>
                 
-                Remove Download Button
+                <!--Remove Download Button-->
                 <Button Grid.Row="1" Grid.Column="3" Margin="5,0" >
                     <FontIcon Glyph="&#xE711;"/>
                 </Button>
                 
-                Download Size
-                <TextBlock Grid.Row="2" Text="3.4 MB / 300MB" FontSize="14" Margin="0,0,0,0" Padding="0,5" />
+                <!--Download Size-->
+                <TextBlock Grid.Row="2" Text="{x:Bind TotalSize}" FontSize="14" Margin="0,0,0,0" Padding="0,5" />
                 
-                Download Speed
-                <TextBlock Grid.Row="2" Grid.Column="1" Text="300 MBps" FontSize="14" HorizontalAlignment="Right"/>
-            </Grid>-->
+                <!--Download Speed-->
+                <TextBlock Grid.Row="2" Grid.Column="1" Text="{x:Bind Speed}" FontSize="14" HorizontalAlignment="Right"/>
+            </Grid>
         </DataTemplate>
     </Page.Resources>
 
@@ -85,7 +84,7 @@
             </MenuBar>
             <CommandBar Background="Transparent" IsOpen="False" DefaultLabelPosition="Right" Grid.Column="1">
                 <AppBarButton Icon="Add" Label="Add" Click="addDownloadBtnClicked" />
-                <AppBarButton Icon="Pause" Label="Pause" Click="AdditemtoLV" />
+                <AppBarButton Icon="Pause" Label="Pause" />
                 <AppBarButton Icon="Delete" Label="Delete"/>
                 <CommandBar.SecondaryCommands>
                     <AppBarButton Icon="Import" Label="Import">
@@ -110,6 +109,6 @@
 
         <!--Download View-->
 
-        <ListView Grid.Row="1" x:Name="BaseExample" ItemTemplate="{StaticResource DownlodsListViewTemplate}"/>
+        <ListView Grid.Row="1" x:Name="DownloadsLV" ItemTemplate="{StaticResource DownlodsListViewTemplate}"/>
     </Grid>
 </Page>
