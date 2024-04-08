@@ -2,7 +2,13 @@ namespace Torroid
 {
     runtimeclass Downloads : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
     {
-        Downloads(String fileName);
+        Downloads(String fileName, String totalSize);
         String FileName;
+        String Percentage;
+        Double DPercentage;
+        String CurSize;
+        String TotalSize;
+        String Speed;
+        
     }
 }
