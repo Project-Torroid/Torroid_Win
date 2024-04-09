@@ -32,9 +32,10 @@ public:
      3. URL of file to download
      */
     void json::addDownloadToJson(
-        std::string filename,        // File name
-        std::string totalFileSize,   // Total file size in MB
-        std::string url              // URL of file to download
+        std::string filename,      // File name
+        std::string totalFileSize, // Total file size in MB
+        std::string url,           // URL of file to download
+        std::string gid            // Download file gid
     );
     /*=============================================[ Json update on pause, complete or delete ]=============================================*/
 

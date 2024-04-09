@@ -82,66 +82,92 @@ void DownloadFile::StartDownload()
     while (true)
     {
         int iResult = aria2::run(session, aria2::RUN_ONCE);
-        
-        if (iResult != 1)
-        {
-            break;
-        }
     }
 }
 
 IAsyncAction DownloadFile::addUrl(std::vector<std::string> uri)
 {   
+    aria2::A2Gid gid;
+
     // Check if file already present
     for (auto map : jsonEntry.vDownloadEntries) {
         if (map["url"] == uri[0]) 
         {
             if (std::filesystem::exists(map["filename"]))
             {
-                Logging::Info(" already present");
-                return 0;
+                if (map["downloaded"] == "True")
+                {
+                    Logging::Info(" already present");
+                    return EXIT_SUCCESS;
+                }
+
+                // Add new URI to session to download file
+                int iResult = aria2::addUri(session, &gid, uri, options);
+                if (iResult < 0)
+                {
+                    /*std::cerr << "Failed to add download" << uri[0] << std::endl;*/
+                }
+                return EXIT_SUCCESS;
             }
+
+            // Add new URI to session to download file
+            int iResult = aria2::addUri(session, &gid, uri, options);
+            if (iResult < 0)
+            {
+                /*std::cerr << "Failed to add download" << uri[0] << std::endl;*/
+            }
+            updateJsonAndUI(gid, uri[0]);
+            return EXIT_SUCCESS;
         }
     }
-
-    aria2::A2Gid gid;
-
     // Add new URI to session to download file
     int iResult = aria2::addUri(session, &gid, uri, options);
     if (iResult < 0)
     {
         /*std::cerr << "Failed to add download" << uri[0] << std::endl;*/
-        
     }
-
-    // Add ne gid to gid vector
-    //gids.insert(gids.begin(),gid);
-
-     updateJsonAndUI(gid, uri[0]);
-    //jsonEntry.json::addDownloadToJson("filenme","67mb",uri[0]);
-    //DownloadFile::ResumeDownload(0);
-
-    return 0;
+    updateJsonAndUI(gid, uri[0]);
+    return EXIT_SUCCESS;
 }
 
-int DownloadFile::pause(int gidIndex)
+int DownloadFile::pause(int Index)
 {
-    int iResult = aria2::pauseDownload(session, gids[gidIndex]);
-    return iResult;
+    aria2::A2Gid sGid = std::stoull(jsonEntry.vDownloadEntries[Index]["gid"]);
+    return aria2::pauseDownload(session, sGid);
 }
 
-int DownloadFile::Canceldownload(int gidIndex)
+int DownloadFile::Canceldownload(int Index)
 {
-    return aria2::removeDownload(session, gids[gidIndex]);
+    aria2::A2Gid sGid = std::stoull(jsonEntry.vDownloadEntries[Index]["gid"]);
+    aria2::DownloadHandle* handle = aria2::getDownloadHandle(session, sGid);
+    int downloadedSize = handle->getCompletedLength();
+    int percentage = handle->getTotalLength() > 0 ? (100 * downloadedSize / handle->getTotalLength()) : 0;
+    aria2::deleteDownloadHandle(handle);
+    jsonEntry.updateJsonOnPause(Index, std::to_string(downloadedSize), std::to_string(percentage));
+    return aria2::removeDownload(session, sGid);
 }
 
-int DownloadFile::ResumeDownload(int gidIndex)
+int DownloadFile::ResumeDownload(int Index)
 {
-    Canceldownload(gidIndex);
+    Canceldownload(Index);
     std::vector<std::string> uri;
-    uri.push_back(jsonEntry.vDownloadEntries[gidIndex]["url"]);
+    uri.push_back(jsonEntry.vDownloadEntries[Index]["url"]);
     addUrl(uri);
     return EXIT_SUCCESS;
+}
+
+void DownloadFile::onDownloadComplete(aria2::A2Gid gid)
+{
+    int Index = 0;
+    // Check if file already present
+    for (auto map : jsonEntry.vDownloadEntries) {
+        if (std::stoull(map["gid"]) == gid )
+        {
+            break;
+        }
+        Index++;
+    }
+    jsonEntry.updateJsonOnDownloadComplete(Index,jsonEntry.vDownloadEntries[Index]["totalFileSize"]);
 }
 
 int DownloadFile::getSessionActiveDownloads()
@@ -174,7 +200,8 @@ IAsyncAction DownloadFile::updateJsonAndUI(aria2::A2Gid gid, std::string url)
     size = std::to_string(iSize);
     aria2::deleteDownloadHandle(handle); // delete handle
 
-    jsonEntry.json::addDownloadToJson(filedata.path, size, url);
+    std::string sGid = std::to_string(gid);
+    jsonEntry.json::addDownloadToJson(filedata.path, size, url, sGid);
 
     return EXIT_SUCCESS;
 }
@@ -201,34 +228,38 @@ int DownloadFile::getSessionDownloadSpeed()
     return globalStat.downloadSpeed;
 }
 
-int DownloadFile::getDownloadspeed(int gidIndex)
+int DownloadFile::getDownloadspeed(int Index)
 {
-    aria2::DownloadHandle* handle = aria2::getDownloadHandle(session, gids[gidIndex]);
+    aria2::A2Gid sGid = std::stoull(jsonEntry.vDownloadEntries[Index]["gid"]);
+    aria2::DownloadHandle* handle = aria2::getDownloadHandle(session, sGid);
     int speed = handle->getDownloadSpeed();
     aria2::deleteDownloadHandle(handle);
     return speed;
 }
 
-int DownloadFile::getFileSize(int gidIndex)
+int DownloadFile::getFileSize(int Index)
 {
-    aria2::DownloadHandle* handle = aria2::getDownloadHandle(session, gids[gidIndex]);
+    aria2::A2Gid sGid = std::stoull(jsonEntry.vDownloadEntries[Index]["gid"]);
+    aria2::DownloadHandle* handle = aria2::getDownloadHandle(session, sGid);
     int TotalLength = handle->getTotalLength();
     aria2::deleteDownloadHandle(handle);
     return TotalLength;
 }
 
-int DownloadFile::getDownloadedSize(int gidIndex)
+int DownloadFile::getDownloadedSize(int Index)
 {
-    aria2::DownloadHandle* handle = aria2::getDownloadHandle(session, gids[gidIndex]);
+    aria2::A2Gid sGid = std::stoull(jsonEntry.vDownloadEntries[Index]["gid"]);
+    aria2::DownloadHandle* handle = aria2::getDownloadHandle(session, sGid);
     int length = handle->getCompletedLength();
     aria2::deleteDownloadHandle(handle);
     return length;
 }
 
 // Return download directory of file to download
-std::string DownloadFile::getDownloadDir(int gidIndex)
+std::string DownloadFile::getDownloadDir(int Index)
 {
-    aria2::DownloadHandle* handle = aria2::getDownloadHandle(session, gids[gidIndex]);
+    aria2::A2Gid sGid = std::stoull(jsonEntry.vDownloadEntries[Index]["gid"]);
+    aria2::DownloadHandle* handle = aria2::getDownloadHandle(session, sGid);
     std::string dir = handle->getDir();
     aria2::deleteDownloadHandle(handle);
     return dir;
@@ -245,7 +276,7 @@ int DownloadFile::closeSession()
 //int main()
 //{
 //    std::vector<std::string> url = { "https://www.nhc.noaa.gov/pdf/NWS-NHC-1977-2.pdf" };
-//     std::vector<std::string> url1 = {"https://www-2.dc.uba.ar/staff/becher/dragon.pdf"};
+//     std::vector<std::string> url1 = {"https://www.nhc.noaa.gov/pdf/1851_2007_hurr_poster.pdf"};
 //    downloadFile dfile;
 //     dfile.addUrl(url1);
 //    dfile.addUrl(url);

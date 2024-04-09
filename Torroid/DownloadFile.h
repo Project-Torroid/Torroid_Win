@@ -60,6 +60,8 @@ public:
     // Resume paused download
     int ResumeDownload(int gidIndex);
 
+    void DownloadFile::onDownloadComplete(aria2::A2Gid gid);
+
 
     /*============================================[ GET FUNCTIONS ]============================================*/
     

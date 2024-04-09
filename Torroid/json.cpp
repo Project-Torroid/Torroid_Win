@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "json.h"
-
+#include "logging.h"
 #include <fstream>
 #include <string>
 #include <regex>
@@ -71,17 +71,20 @@ int json::GetJsonToVector()
 }
 
 void json::addDownloadToJson(
-    std::string filename,        // File name
-    std::string totalFileSize,   // Total file size in MB
-    std::string url              // URL of file to download
+    std::string filename,      // File name
+    std::string totalFileSize, // Total file size in MB
+    std::string url,           // URL of file to download
+    std::string gid            // Download file gid
 )
 {
     std::string json = "[\n\t{\n"
-                        "\t\t\"downloadPercent\": \"0" 
-                        "\",\n\t\t\"downloaded\": \"False\",\n\t\t\"downloadedSize\": \"0"
-                        "\",\n\t\t\"filename\": \"" + filename + 
-                        "\",\n\t\t\"totalFileSize\": \"" + totalFileSize +
-                        "\",\n\t\t\"url\": \"" + url + "\"\n\t}\n]";
+        "\t\t\"downloadPercent\": \"0"
+        "\",\n\t\t\"downloaded\": \"False\",\n\t\t\"downloadedSize\": \"0"
+        "\",\n\t\t\"filename\": \"" +
+        filename +
+        "\",\n\t\t\"gid\": \"" + gid +
+        "\",\n\t\t\"totalFileSize\": \"" + totalFileSize +
+        "\",\n\t\t\"url\": \"" + url + "\"\n\t}\n]";
 
 
     std::ifstream infile(jsonFilePath);
@@ -117,9 +120,10 @@ void json::addDownloadToJson(
         vLines.insert(vLines.begin() + 3, "\t\t\"downloaded\": \"False\",");
         vLines.insert(vLines.begin() + 4, "\t\t\"downloadedSize\": \"0\",");
         vLines.insert(vLines.begin() + 5, "\t\t\"filename\": \"" + filename + "\",");
-        vLines.insert(vLines.begin() + 6, "\t\t\"totalFileSize\": \"" + totalFileSize + "\",");
-        vLines.insert(vLines.begin() + 7, "\t\t\"url\": \"" + url + "\"");
-        vLines.insert(vLines.begin() + 8, "\t},");
+        vLines.insert(vLines.begin() + 6, "\t\t\"gid\": \"" + gid + "\",");
+        vLines.insert(vLines.begin() + 7, "\t\t\"totalFileSize\": \"" + totalFileSize + "\",");
+        vLines.insert(vLines.begin() + 8, "\t\t\"url\": \"" + url + "\"");
+        vLines.insert(vLines.begin() + 9, "\t},");
 
         // Close file
         infile.close();
@@ -137,7 +141,7 @@ void json::addDownloadToJson(
 
 void json::updateJsonOnPause(size_t index, std::string newDownloadedSize, std::string newdownloadPercent)
 {
-    size_t lineToUpdate = (2 + (index * 8)); // line index to update
+    size_t lineToUpdate = (2 + (index * 9)); // line index to update
     std::ifstream inFile(jsonFilePath);
     std::vector<std::string> vLines;
     std::string line;
@@ -148,6 +152,7 @@ void json::updateJsonOnPause(size_t index, std::string newDownloadedSize, std::s
         vLines.push_back(line);
     }
 
+    Logging::Info("updating");
     // Update download state on pause
     vDownloadEntries[index]["downloadedSize"] = newDownloadedSize;
     vLines[lineToUpdate + 2] = "\t\t\"downloadedSize\": \"" + newDownloadedSize + "\",";
@@ -160,6 +165,7 @@ void json::updateJsonOnPause(size_t index, std::string newDownloadedSize, std::s
     {
         outFile << updatedLine << '\n';
     }
+    Logging::Info("updated");
     outFile.close();
 }
 
