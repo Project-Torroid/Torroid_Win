@@ -70,9 +70,12 @@ namespace winrt::Torroid::implementation
                 std::vector<std::string> vUrl = { winrt::to_string(urlBox.Text()) };
                 
                 // Add Download
-                DownloadFile::DownloadInstance().addUrl(vUrl);
+                int iResult = DownloadFile::DownloadInstance().addUrl(vUrl);
 
-                AddToDownloadsLV(0, false);
+                if (iResult == 0 || iResult == 1)
+                {
+                    AddToDownloadsLV(0, false);
+                }
             });
         });
         dialog.ShowAsync();

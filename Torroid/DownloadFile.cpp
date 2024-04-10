@@ -8,8 +8,10 @@
 #include "json.h"
 #include <filesystem>
 
-int downloadEventCallback(aria2::Session* session, aria2::DownloadEvent event, const aria2::A2Gid& gid, void* userData)
-{
+int downloadEventCallback(aria2::Session* session, aria2::DownloadEvent event, const aria2::A2Gid gid, void* userData)
+{   
+    int index = 0;
+    bool get = false;
     switch (event)
     {
     case aria2::EVENT_ON_DOWNLOAD_START:
@@ -17,6 +19,22 @@ int downloadEventCallback(aria2::Session* session, aria2::DownloadEvent event, c
         break;
     case aria2::EVENT_ON_DOWNLOAD_COMPLETE:
         //std::cerr << "COMPLETE" << std::endl;
+        
+        for (auto map : DownloadFile::DownloadInstance().jsonEntry.vDownloadEntries)
+        {
+            if (std::stoull(map["gid"]) == gid)
+            {   
+                get = true;
+                break;
+            }
+            index++;
+        }
+        if ( get)
+        {
+            std::string totalSize = DownloadFile::DownloadInstance().jsonEntry.vDownloadEntries[index]["totalFileSize"];
+            DownloadFile::DownloadInstance().jsonEntry.updateJsonOnDownloadComplete(index, totalSize);
+        }
+
         break;
     case aria2::EVENT_ON_DOWNLOAD_ERROR:
         //std::cerr << "ERROR" << std::endl;
@@ -85,7 +103,7 @@ void DownloadFile::StartDownload()
     }
 }
 
-IAsyncAction DownloadFile::addUrl(std::vector<std::string> uri)
+int DownloadFile::addUrl(std::vector<std::string> uri)
 {   
     aria2::A2Gid gid;
 
@@ -98,7 +116,9 @@ IAsyncAction DownloadFile::addUrl(std::vector<std::string> uri)
                 if (map["downloaded"] == "True")
                 {
                     Logging::Info(" already present");
-                    return EXIT_SUCCESS;
+
+                    // return if file already downloaded and present in last download directory
+                    return 3;
                 }
 
                 // Add new URI to session to download file
@@ -107,7 +127,9 @@ IAsyncAction DownloadFile::addUrl(std::vector<std::string> uri)
                 {
                     /*std::cerr << "Failed to add download" << uri[0] << std::endl;*/
                 }
-                return EXIT_SUCCESS;
+
+                // return if file is present but not completely downloaded yet (paused)
+                return 2;
             }
 
             // Add new URI to session to download file
@@ -117,7 +139,8 @@ IAsyncAction DownloadFile::addUrl(std::vector<std::string> uri)
                 /*std::cerr << "Failed to add download" << uri[0] << std::endl;*/
             }
             updateJsonAndUI(gid, uri[0]);
-            return EXIT_SUCCESS;
+            // return if file downloaded last time but not present in last download directory
+            return 1;
         }
     }
     // Add new URI to session to download file
@@ -127,6 +150,8 @@ IAsyncAction DownloadFile::addUrl(std::vector<std::string> uri)
         /*std::cerr << "Failed to add download" << uri[0] << std::endl;*/
     }
     updateJsonAndUI(gid, uri[0]);
+
+    // return if file is downloading for first time
     return EXIT_SUCCESS;
 }
 
@@ -237,13 +262,10 @@ int DownloadFile::getDownloadspeed(int Index)
     return speed;
 }
 
-int DownloadFile::getFileSize(int Index)
+std::string DownloadFile::getFileSize(int Index)
 {
-    aria2::A2Gid sGid = std::stoull(jsonEntry.vDownloadEntries[Index]["gid"]);
-    aria2::DownloadHandle* handle = aria2::getDownloadHandle(session, sGid);
-    int TotalLength = handle->getTotalLength();
-    aria2::deleteDownloadHandle(handle);
-    return TotalLength;
+    return jsonEntry.vDownloadEntries[Index]["totalFileSize"];
+    
 }
 
 int DownloadFile::getDownloadedSize(int Index)

@@ -171,7 +171,7 @@ void json::updateJsonOnPause(size_t index, std::string newDownloadedSize, std::s
 
 void json::updateJsonOnDownloadComplete(size_t index, std::string totalDownloadedSize)
 {
-    size_t lineToUpdate = (3 + (index * 8)); // line index to update
+    size_t lineToUpdate = (2 + (index * 9)); // line index to update
 
     std::ifstream inFile(jsonFilePath);
     std::vector<std::string> lines;
@@ -187,7 +187,7 @@ void json::updateJsonOnDownloadComplete(size_t index, std::string totalDownloade
     lines[lineToUpdate] = "\t\t\"downloadPercent\": \"100\",";
 
     vDownloadEntries[index]["downloaded"] = "True";
-    lines[lineToUpdate + 1] = "\t\t\"downloaded\": \"True\"";
+    lines[lineToUpdate + 1] = "\t\t\"downloaded\": \"True\",";
 
     vDownloadEntries[index]["downloadedSize"] = totalDownloadedSize;
     lines[lineToUpdate + 2] = "\t\t\"downloadedSize\": \"" + totalDownloadedSize + "\",";

@@ -12,7 +12,6 @@ using namespace Windows::Foundation;
 class DownloadFile
 {
 private:
-    json jsonEntry;                 // Initialize json object
     aria2::Session* session = NULL;        // aria2 session object
     aria2::KeyVals options;         // aria2 options
     aria2::SessionConfig config;    // configuration for the session
@@ -25,6 +24,8 @@ private:
     
 
 public:
+
+    json jsonEntry;                 // Initialize json object
     
     /*=============================================[ Setup FUNCTION ]=============================================*/
 
@@ -42,9 +43,17 @@ public:
     /*
      Add new download url
      Arguments:
-     1. vector containing urls
+        1. vector containing urls
+
+     Return status:
+     0 : if file is downloading for first time
+     1 : if file downloaded last time but not present in last download directory
+     2 : if file is present but not completely downloaded yet (paused)
+     3 : if file already downloaded and present in last download directory
+
+        
      */
-    IAsyncAction DownloadFile::addUrl(std::vector<std::string> uri);
+    int DownloadFile::addUrl(std::vector<std::string> uri);
 
     /*-------------------------------[ PAUSE ,RESUME AND CANCEL ]-------------------------------*/
 
@@ -84,7 +93,7 @@ public:
     /*------------------------------------[ DOWNLOAD SIZE ]------------------------------------*/
 
     // Return total size of file to download
-    int getFileSize(int gidIndex);
+    std::string getFileSize(int gidIndex);
 
     // Returns the completed length of this download in bytes.
     int getDownloadedSize(int gidIndex);
