@@ -13,11 +13,9 @@ namespace winrt::Torroid::implementation
 
         void AllDownloads::addDownloadBtnClicked(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
 
-        void AddToDownloadsLV(int index, bool isFirstCall);
-
-        std::string FilePath_to_FileName(std::string filePath);
+        void AllDownloads::AddToDownloadsLV(int index, bool isFirstCall);
     private:
-        Torroid::DownloadsViewModel m_mainViewModel;
+        Torroid::DownloadsViewModel m_mainViewModel;  
     };
 }
 
