@@ -42,24 +42,11 @@ namespace winrt::Torroid::implementation
         }
     }
 
-    hstring Downloads::CurSize(){ return m_curSize; }
-    void Downloads::CurSize(hstring const& value)
+    hstring Downloads::Size(){ return m_size; }
+    void Downloads::Size(hstring const& value)
     {
-        if (m_curSize != value)
-        {
-            m_curSize = value;
-            m_propertyChanged(*this, PropertyChangedEventArgs{ L"CurSize" });
-        }
-    }
-
-    hstring Downloads::TotalSize(){ return m_totalSize; }
-    void Downloads::TotalSize(hstring const& value)
-    {
-        if (m_totalSize != value)
-        {
-            m_totalSize = value;
-            m_propertyChanged(*this, PropertyChangedEventArgs{ L"TotalSize" });
-        }
+        m_size = L"Size: " + value + L"/" + m_totalSize;
+        m_propertyChanged(*this, PropertyChangedEventArgs{ L"Size" });
     }
 
     hstring Downloads::Speed(){ return m_speed; }

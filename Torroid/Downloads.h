@@ -17,11 +17,10 @@ namespace winrt::Torroid::implementation
         
         double DPercentage();
         void DPercentage(double const& value);
-        
-        hstring CurSize();
-        void CurSize(hstring const& value);
-        hstring TotalSize();
-        void TotalSize(hstring const& value);
+
+        hstring Size();
+        void Size(hstring const& value);
+
         hstring Speed();
         void Speed(hstring const& value);
 
@@ -31,10 +30,10 @@ namespace winrt::Torroid::implementation
     private:
         hstring m_fileName;
         hstring m_percentage = L"0%";
-        double m_dPercentage = 10;
-        hstring m_curSize = L"0Mb";
-        hstring m_totalSize = L"0Mb";
-        hstring m_speed = L"0Mbps";
+        double m_dPercentage = 0;
+        hstring m_totalSize = L"0 MB";
+        hstring m_size = L"Size: 0 Mb / " + m_totalSize;
+        hstring m_speed = L"0 Mbps";
         event<Microsoft::UI::Xaml::Data::PropertyChangedEventHandler> m_propertyChanged;
     };
 }

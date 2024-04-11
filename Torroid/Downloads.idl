@@ -6,8 +6,7 @@ namespace Torroid
         String FileName;
         String Percentage;
         Double DPercentage;
-        String CurSize;
-        String TotalSize;
+        String Size;
         String Speed;
         
     }
