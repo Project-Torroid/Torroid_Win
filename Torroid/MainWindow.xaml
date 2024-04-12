@@ -21,7 +21,7 @@
         <StackPanel Orientation="Horizontal" MinHeight="48" Grid.Row="0">
             <!--<FontIcon Glyph="&#xE896;" Width="50" />-->
             <BitmapIcon x:Name="DownloadManagerIcon" Width="50" ShowAsMonochrome="True" UriSource="ms-appx:///Assets/StoreLogo.png"/>
-            <TextBlock Text="XYZ Download Manager" VerticalAlignment="Center"/>
+            <TextBlock Text="Torroid Download Manager" VerticalAlignment="Center"/>
         </StackPanel>
 
 
