@@ -96,7 +96,10 @@ namespace winrt::Torroid::implementation
         {
             MainViewModel().DownloadsOBVector().Append(make<Torroid::implementation::Downloads>(h_name, h_size));
         }
-        else MainViewModel().DownloadsOBVector().InsertAt(0,make<Torroid::implementation::Downloads>(h_name, h_size));
-        
+        else {
+            MainViewModel().DownloadsOBVector().InsertAt(0, make<Torroid::implementation::Downloads>(h_name, h_size));
+            MainViewModel().DownloadsOBVector().GetAt(0).IsDownloading(true);
+            MainViewModel().startDownloadStatsUpdates();
+        }
     }
 }

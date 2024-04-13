@@ -8,5 +8,8 @@ namespace Torroid
         Downloads Downloads{ get; };
 
         Windows.Foundation.Collections.IObservableVector<Downloads> DownloadsOBVector{ get; };
+
+        void startDownloadStatsUpdates();
+        void stopDownloadStatsUpdates();
     }
 }
