@@ -2,14 +2,32 @@
 #include "Downloads.h"
 #include "Downloads.g.cpp"
 
+#include <winrt/Windows.System.Threading.h>
+#include <winrt/Windows.ApplicationModel.Core.h>
+#include <winrt/Windows.UI.Core.h>
+#include "logging.h"
+
 using namespace winrt;
 using namespace Microsoft::UI::Xaml;
 using namespace Microsoft::UI::Xaml::Data;
+using namespace Windows::System::Threading;
+using namespace Windows::ApplicationModel::Core;
+using namespace Windows::UI::Core; 
 
 namespace winrt::Torroid::implementation
 {
     Downloads::Downloads(hstring const& fileName, hstring const& totalSize) : m_fileName{ fileName }, m_totalSize { totalSize }
     {
+
+    }
+
+    bool Downloads::IsDownloading() { return m_isDownloading; }
+    void Downloads::IsDownloading(bool value)
+    {
+        if (m_isDownloading != value)
+        {
+            m_isDownloading = value;
+        }
     }
 
     hstring Downloads::FileName(){ return m_fileName; }
@@ -52,11 +70,8 @@ namespace winrt::Torroid::implementation
     hstring Downloads::Speed(){ return m_speed; }
     void Downloads::Speed(hstring const& value)
     {
-        if (m_speed != value)
-        {
-            m_speed = value;
-            m_propertyChanged(*this, PropertyChangedEventArgs{ L"Speed" });
-        }
+        m_speed = value;
+        m_propertyChanged(*this, PropertyChangedEventArgs{ L"Speed" });
     }
 
     winrt::event_token Downloads::PropertyChanged(PropertyChangedEventHandler const& handler)

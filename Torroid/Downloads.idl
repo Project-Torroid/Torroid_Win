@@ -8,6 +8,6 @@ namespace Torroid
         Double DPercentage;
         String Size;
         String Speed;
-        
+        Boolean IsDownloading;
     }
 }

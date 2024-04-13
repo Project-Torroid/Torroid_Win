@@ -12,6 +12,9 @@ namespace winrt::Torroid::implementation
         hstring FileName();
         void FileName(hstring const& value);
 
+        bool IsDownloading();
+        void IsDownloading(bool value);
+
         hstring Percentage();
         void Percentage(hstring const& value);
         
@@ -28,6 +31,7 @@ namespace winrt::Torroid::implementation
         void PropertyChanged(winrt::event_token const& token) noexcept;
 
     private:
+        bool m_isDownloading = false;
         hstring m_fileName;
         hstring m_percentage = L"0%";
         double m_dPercentage = 0;
