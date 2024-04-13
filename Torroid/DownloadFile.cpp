@@ -5,7 +5,7 @@
 #include <sstream>
 #include <winrt/Windows.Storage.h>
 #include "logging.h"
-#include "json.h"
+#include "DownloadsJson.h"
 #include <filesystem>
 
 int downloadEventCallback(aria2::Session* session, aria2::DownloadEvent event, const aria2::A2Gid gid, void* userData)
@@ -226,7 +226,7 @@ IAsyncAction DownloadFile::updateJsonAndUI(aria2::A2Gid gid, std::string url)
     aria2::deleteDownloadHandle(handle); // delete handle
 
     std::string sGid = std::to_string(gid);
-    jsonEntry.json::addDownloadToJson(filedata.path, size, url, sGid);
+    jsonEntry.addDownloadToJson(filedata.path, size, url, sGid);
 
     return EXIT_SUCCESS;
 }

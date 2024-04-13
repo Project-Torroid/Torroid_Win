@@ -1,11 +1,11 @@
 #include "pch.h"
-#include "json.h"
+#include "DownloadsJson.h"
 #include "logging.h"
 #include <fstream>
 #include <string>
 #include <regex>
 
-json::json()
+DownloadsJson::DownloadsJson()
 {   
     //TODO: app data path
     std::string appDataPath = "C:\\test\\";
@@ -19,7 +19,7 @@ json::json()
     GetJsonToVector();
 }
 
-std::map<std::string, std::string> json::getKeyValuePairs(std::string &json)
+std::map<std::string, std::string> DownloadsJson::getKeyValuePairs(std::string &json)
 {
     std::map<std::string, std::string> dataKeyValuePair;
     std::regex keyValueRegex("\"([^\"]+)\"\\s*:\\s*\"([^\"]+)\"");
@@ -33,7 +33,7 @@ std::map<std::string, std::string> json::getKeyValuePairs(std::string &json)
     return dataKeyValuePair;
 }
 
-int json::GetJsonToVector()
+int DownloadsJson::GetJsonToVector()
 {
     // Open the file to read
     std::ifstream inputFile(jsonFilePath);
@@ -70,7 +70,7 @@ int json::GetJsonToVector()
     return EXIT_SUCCESS;
 }
 
-void json::addDownloadToJson(
+void DownloadsJson::addDownloadToJson(
     std::string filename,      // File name
     std::string totalFileSize, // Total file size in MB
     std::string url,           // URL of file to download
@@ -139,7 +139,7 @@ void json::addDownloadToJson(
     vDownloadEntries.insert(vDownloadEntries.begin(), getKeyValuePairs(json));
 }
 
-void json::updateJsonOnPause(size_t index, std::string newDownloadedSize, std::string newdownloadPercent)
+void DownloadsJson::updateJsonOnPause(size_t index, std::string newDownloadedSize, std::string newdownloadPercent)
 {
     size_t lineToUpdate = (2 + (index * 9)); // line index to update
     std::ifstream inFile(jsonFilePath);
@@ -169,7 +169,7 @@ void json::updateJsonOnPause(size_t index, std::string newDownloadedSize, std::s
     outFile.close();
 }
 
-void json::updateJsonOnDownloadComplete(size_t index, std::string totalDownloadedSize)
+void DownloadsJson::updateJsonOnDownloadComplete(size_t index, std::string totalDownloadedSize)
 {
     size_t lineToUpdate = (2 + (index * 9)); // line index to update
 
@@ -203,7 +203,7 @@ void json::updateJsonOnDownloadComplete(size_t index, std::string totalDownloade
     outFile.close();
 }
 
-void json::deleteDownload(size_t index)
+void DownloadsJson::deleteDownload(size_t index)
 {
     std::ifstream inFile(jsonFilePath);
     std::vector<std::string> lines;
@@ -231,7 +231,7 @@ void json::deleteDownload(size_t index)
     }
 }
 
-void json::writeToJsonOnexit()
+void DownloadsJson::writeToJsonOnexit()
 {
     // Construct the JSON string
     std::string jsonString = "[\n";

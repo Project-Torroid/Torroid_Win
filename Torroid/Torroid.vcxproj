@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\packages\Microsoft.WindowsAppSDK.1.5.240404000\build\native\Microsoft.WindowsAppSDK.props" Condition="Exists('..\packages\Microsoft.WindowsAppSDK.1.5.240404000\build\native\Microsoft.WindowsAppSDK.props')" />
   <Import Project="..\packages\Microsoft.Windows.CppWinRT.2.0.240405.15\build\native\Microsoft.Windows.CppWinRT.props" Condition="Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.240405.15\build\native\Microsoft.Windows.CppWinRT.props')" />
@@ -126,7 +126,7 @@ sqlite3.lib
     <ClInclude Include="DownloadFile.h" />
     <ClInclude Include="Downloads.h" />
     <ClInclude Include="DownloadsViewModel.h" />
-    <ClInclude Include="json.h" />
+    <ClInclude Include="DownloadsJson.h" />
     <ClInclude Include="logging.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="App.xaml.h">
@@ -159,7 +159,7 @@ sqlite3.lib
     <ClCompile Include="DownloadFile.cpp" />
     <ClCompile Include="Downloads.cpp" />
     <ClCompile Include="DownloadsViewModel.cpp" />
-    <ClCompile Include="json.cpp" />
+    <ClCompile Include="DownloadsJson.cpp" />
     <ClCompile Include="logging.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>

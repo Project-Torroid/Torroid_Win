@@ -6,7 +6,7 @@
 
 #include "DownloadFile.h"
 #include "logging.h"
-#include "json.h"
+#include "DownloadsJson.h"
 #include "Utils.h"
 
 
@@ -24,7 +24,7 @@ namespace winrt::Torroid::implementation
 
         std::thread PopulateUi([&]() {
 
-            json jsonFile;
+            DownloadsJson jsonFile;
 
             int v_size = jsonFile.vDownloadEntries.size();
 
@@ -82,7 +82,7 @@ namespace winrt::Torroid::implementation
 
     void AllDownloads::AddToDownloadsLV(int index, bool isFirstCall)
     {
-        json jsonFile;
+        DownloadsJson jsonFile;
         std::string s_name =jsonFile.vDownloadEntries[index]["filename"];
 
         //Logging::Info("Download File Name: " + s_name);

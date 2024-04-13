@@ -2,7 +2,7 @@
 
 #include "pch.h"
 #include<aria2/aria2.h>
-#include<json.h>
+#include "DownloadsJson.h"
 
 #include <winrt/Windows.Foundation.Collections.h>
 
@@ -25,7 +25,7 @@ private:
 
 public:
 
-    json jsonEntry;                 // Initialize json object
+    DownloadsJson jsonEntry;                 // Initialize json object
     
     /*=============================================[ Setup FUNCTION ]=============================================*/
 
