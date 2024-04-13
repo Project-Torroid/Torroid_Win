@@ -26,11 +26,11 @@ namespace winrt::Torroid::implementation
 
             DownloadsJson jsonFile;
 
-            int v_size = jsonFile.vDownloadEntries.size();
+            size_t v_size = jsonFile.vDownloadEntries.size();
 
-            for (int i = 0; i < v_size; i++)
+            for (size_t i = 0; i < v_size; i++)
             {
-                AddToDownloadsLV(i, true);
+                addToDownloadsLV(i, true);
             }
             
         });
@@ -72,7 +72,7 @@ namespace winrt::Torroid::implementation
 
                 if (iResult == 0 || iResult == 1)
                 {
-                    AddToDownloadsLV(0, false);
+                    addToDownloadsLV(0, false);
                 }
             });
         });
@@ -80,7 +80,7 @@ namespace winrt::Torroid::implementation
 
     }
 
-    void AllDownloads::AddToDownloadsLV(int index, bool isFirstCall)
+    void AllDownloads::addToDownloadsLV(int index, bool isFirstCall)
     {
         DownloadsJson jsonFile;
         std::string s_name =jsonFile.vDownloadEntries[index]["filename"];
