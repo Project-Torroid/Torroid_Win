@@ -3,11 +3,12 @@
 #if __has_include("MainWindow.g.cpp")
 #include "MainWindow.g.cpp"
 #endif
+
 #include <winrt/Microsoft.UI.Windowing.h>
 #include <winrt/Windows.Storage.h>
-#include <SettingsPage.xaml.h>
-#include<winrt/Windows.UI.Xaml.Interop.h>
-#include <winrt/Windows.UI.Xaml.Controls.h>
+#include <winrt/Windows.UI.Xaml.Interop.h>
+
+#include "SettingsPage.xaml.h"
 
 using namespace winrt;
 using namespace Microsoft::UI::Xaml;
@@ -27,11 +28,11 @@ namespace winrt::Torroid::implementation
         throw hresult_not_implemented();
     }
     MainWindow::MainWindow() {
+        this->InitializeComponent();
         this->ExtendsContentIntoTitleBar(true);
         winrt::Microsoft::UI::Windowing::AppWindow appWindow = AppWindow();
         winrt::Microsoft::UI::Windowing::AppWindowTitleBar titlebar = appWindow.TitleBar();
-        titlebar.PreferredHeightOption(winrt::Microsoft::UI::Windowing::TitleBarHeightOption::Tall);
-        this->InitializeComponent();
+        titlebar.PreferredHeightOption(winrt::Microsoft::UI::Windowing::TitleBarHeightOption::Standard);
 
         // default selected item for Navigation
         auto defaultNavSelection = MainWindowNav().MenuItems().GetAt(0).as<Controls::NavigationViewItem>();
