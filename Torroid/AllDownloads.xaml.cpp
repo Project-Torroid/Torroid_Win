@@ -32,8 +32,8 @@ namespace winrt::Torroid::implementation
             {
                 addToDownloadsLV(i, true);
             }
-            
-        });
+
+            });
         PopulateUi.detach();
 
         // Set up your ListView
@@ -61,21 +61,21 @@ namespace winrt::Torroid::implementation
         /*auto appPath = Windows::Storage::ApplicationData::Current().LocalFolder().Path();*/
 
         dialog.PrimaryButtonClick([this, urlBox = std::move(urlBox)](auto&& ...)
-        {
-            DispatcherQueue().TryEnqueue([this, urlBox = std::move(urlBox)](auto&& ...)
             {
-                
-                std::vector<std::string> vUrl = { winrt::to_string(urlBox.Text()) };
-                
-                // Add Download
-                int iResult = DownloadFile::DownloadInstance().addUrl(vUrl);
+                DispatcherQueue().TryEnqueue([this, urlBox = std::move(urlBox)](auto&& ...)
+                    {
 
-                if (iResult == 0 || iResult == 1)
-                {
-                    addToDownloadsLV(0, false);
-                }
+                        std::vector<std::string> vUrl = { winrt::to_string(urlBox.Text()) };
+
+                        // Add Download
+                        int iResult = DownloadFile::DownloadInstance().addUrl(vUrl);
+
+                        if (iResult == 0 || iResult == 1)
+                        {
+                            addToDownloadsLV(0, false);
+                        }
+                    });
             });
-        });
         dialog.ShowAsync();
 
     }
@@ -91,7 +91,7 @@ namespace winrt::Torroid::implementation
         std::string s_size = jsonFile.vDownloadEntries[index]["totalFileSize"];
         //Logging::Info("Download File Size: " + s_size);
         hstring h_size = to_hstring(Utils::bytesToSize(s_size));
-        
+
         if (isFirstCall)
         {
             MainViewModel().DownloadsOBVector().Append(make<Torroid::implementation::Downloads>(h_name, h_size));
@@ -100,6 +100,29 @@ namespace winrt::Torroid::implementation
             MainViewModel().DownloadsOBVector().InsertAt(0, make<Torroid::implementation::Downloads>(h_name, h_size));
             MainViewModel().DownloadsOBVector().GetAt(0).IsDownloading(true);
             MainViewModel().startDownloadStatsUpdates();
+        }
+    }
+
+    void AllDownloads::PlayPauseButton_Clicked(IInspectable const& sender, RoutedEventArgs const& e)
+    {
+        auto button = sender.as<Microsoft::UI::Xaml::Controls::Button>();
+        auto item = button.DataContext().as<Torroid::Downloads>();
+
+        // Update the FontIcon based on the IsDownloading state
+        auto fontIcon = button.Content().as<Microsoft::UI::Xaml::Controls::FontIcon>();
+        if (item.IsDownloading())
+        {
+            // Pause the Download
+            // 
+            // Set FontIcon to play icon when downloading
+            fontIcon.Glyph(L"\uF5B0");
+        }
+        else
+        {
+            // Resume the Download
+            //
+            // Set FontIcon to pause icon when paused
+            fontIcon.Glyph(L"\uF8AE");
         }
     }
 }

@@ -33,7 +33,7 @@
                 <ProgressBar Grid.Row="1" Value="{x:Bind DPercentage, Mode=OneWay}" Grid.ColumnSpan="2" Minimum="0" Maximum="100" />
                 
                 <!--Play/Pause Download Button-->
-                <Button Grid.Row="1" Grid.Column="2" Margin="5,0">
+                <Button Grid.Row="1" Grid.Column="2" Margin="5,0" Click="PlayPauseButton_Clicked">
                     <FontIcon Glyph="&#xF8AE;" />
                 </Button>
                 
