@@ -36,6 +36,11 @@ DownloadsJson& DownloadsJson::jsonInstance() {
     return *jsonInstance_;
 }
 
+size_t DownloadsJson::size()
+{
+    return vDownloadEntries.size(); // Get size of vector
+}
+
 std::map<std::string, std::string> DownloadsJson::getKeyValuePairs(std::string &json)
 {
     std::map<std::string, std::string> dataKeyValuePair;
