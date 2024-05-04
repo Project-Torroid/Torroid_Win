@@ -22,18 +22,6 @@ namespace winrt::Torroid::implementation
     AllDownloads::AllDownloads() {
         InitializeComponent();
 
-        std::thread PopulateUi([&]() {
-
-            size_t v_size = DownloadsJson::jsonInstance().vDownloadEntries.size();
-
-            for (size_t i = 0; i < v_size; i++)
-            {
-                addToDownloadsLV(i, true);
-            }
-
-            });
-        PopulateUi.detach();
-
         // Set up your ListView
         DownloadsLV().ItemsSource(MainViewModel().DownloadsOBVector());
     }
@@ -70,7 +58,7 @@ namespace winrt::Torroid::implementation
 
                         if (iResult == 0 || iResult == 1)
                         {
-                            addToDownloadsLV(0, false);
+                            addToDownloadsLV(0);
                         }
                     });
             });
@@ -78,7 +66,7 @@ namespace winrt::Torroid::implementation
 
     }
 
-    void AllDownloads::addToDownloadsLV(int index, bool isFirstCall)
+    void AllDownloads::addToDownloadsLV(int index)
     {
         std::string s_name = DownloadsJson::jsonInstance().filename(index);
 
@@ -89,15 +77,8 @@ namespace winrt::Torroid::implementation
         //Logging::Info("Download File Size: " + s_size);
         hstring h_size = to_hstring(Utils::bytesToSize(s_size));
 
-        if (isFirstCall)
-        {
-            MainViewModel().DownloadsOBVector().Append(make<Torroid::implementation::Downloads>(h_name, h_size));
-        }
-        else {
-            MainViewModel().DownloadsOBVector().InsertAt(0, make<Torroid::implementation::Downloads>(h_name, h_size));
-            MainViewModel().DownloadsOBVector().GetAt(0).IsDownloading(true);
-            MainViewModel().startDownloadStatsUpdates();
-        }
+        MainViewModel().DownloadsOBVector().InsertAt(0, make<Torroid::implementation::Downloads>(h_name, h_size));
+        MainViewModel().DownloadsOBVector().GetAt(0).IsDownloading(true);
     }
 
     void AllDownloads::PlayPauseButton_Clicked(IInspectable const& sender, RoutedEventArgs const& e)
