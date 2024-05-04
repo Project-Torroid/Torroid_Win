@@ -88,17 +88,19 @@ namespace winrt::Torroid::implementation
 
         // Update the FontIcon based on the IsDownloading state
         auto fontIcon = button.Content().as<Microsoft::UI::Xaml::Controls::FontIcon>();
+        int index = DownloadsJson::jsonInstance().getIndex(to_string(item.FileName()));
         if (item.IsDownloading())
         {
             // Pause the Download
-            // 
+			DownloadFile::DownloadInstance().pause(index);
             // Set FontIcon to play icon when downloading
             fontIcon.Glyph(L"\uF5B0");
         }
         else
         {
             // Resume the Download
-            //
+            DownloadFile::DownloadInstance().ResumeDownload(index);
+            MainViewModel().DownloadsOBVector().GetAt(index).IsDownloading(true);
             // Set FontIcon to pause icon when paused
             fontIcon.Glyph(L"\uF8AE");
         }
