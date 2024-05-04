@@ -19,6 +19,11 @@ public:
 	// Return the size of the JSON Vector
     size_t size();
 
+    //args: filename
+    //return: index
+	//return the index of the filename in the JSON vector
+	size_t getIndex(std::string filename);
+
     // Return DownloadFile static object
     static DownloadsJson& jsonInstance();
 

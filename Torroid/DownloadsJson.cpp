@@ -1,11 +1,14 @@
 #include "pch.h"
 #include "DownloadsJson.h"
 #include "logging.h"
+#include "Utils.h"
 #include <fstream>
 #include <string>
 #include <regex>
 #include <filesystem>
 #include <sstream>
+
+using namespace winrt::Torroid;
 
 DownloadsJson* DownloadsJson::jsonInstance_ = nullptr;
 
@@ -39,6 +42,18 @@ DownloadsJson& DownloadsJson::jsonInstance() {
 size_t DownloadsJson::size()
 {
     return vDownloadEntries.size(); // Get size of vector
+}
+
+size_t DownloadsJson::getIndex(std::string filename)
+{
+    for (size_t index = 0; index < vDownloadEntries.size(); index++)
+    {
+        std::string f_name = Utils::FilePath_to_FileName(DownloadsJson::filename(index));
+        if(f_name == filename)
+        {
+			return index;
+        }
+    }
 }
 
 std::map<std::string, std::string> DownloadsJson::getKeyValuePairs(std::string &json)
