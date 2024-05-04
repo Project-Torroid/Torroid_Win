@@ -1,12 +1,10 @@
 #include "pch.h"
 #include "DownloadFile.h"
-#include <aria2/aria2.h>
-#include <vector>
-#include <sstream>
-#include <winrt/Windows.Storage.h>
-#include "logging.h"
 #include "DownloadsJson.h"
+#include "logging.h"
+
 #include <filesystem>
+#include <winrt/Windows.Storage.h>
 
 int downloadEventCallback(aria2::Session* session, aria2::DownloadEvent event, const aria2::A2Gid gid, void* userData)
 {   
@@ -20,7 +18,8 @@ int downloadEventCallback(aria2::Session* session, aria2::DownloadEvent event, c
     case aria2::EVENT_ON_DOWNLOAD_COMPLETE:
         //std::cerr << "COMPLETE" << std::endl;
         
-        for (auto map : DownloadFile::DownloadInstance().jsonEntry.vDownloadEntries)
+        // Get index using gid
+        for (std::map<std::string, std::string> map : DownloadsJson::jsonInstance().vDownloadEntries)
         {
             if (std::stoull(map["gid"]) == gid)
             {   
@@ -29,10 +28,12 @@ int downloadEventCallback(aria2::Session* session, aria2::DownloadEvent event, c
             }
             index++;
         }
-        if ( get)
+
+        // Write to JSON
+        if (get)
         {
-            std::string totalSize = DownloadFile::DownloadInstance().jsonEntry.vDownloadEntries[index]["totalFileSize"];
-            DownloadFile::DownloadInstance().jsonEntry.updateJsonOnDownloadComplete(index, totalSize);
+            std::string totalSize = DownloadsJson::jsonInstance().fileSizeTotal(index);
+            DownloadsJson::jsonInstance().updateJsonOnDownloadComplete(index, totalSize);
         }
 
         break;
@@ -53,6 +54,9 @@ DownloadFile::DownloadFile() {
     {
         Logging::Error("iResult: aria2 initionalisation error");
     }
+
+    // Initialize JSON
+    DownloadsJson::jsonInstance();
     
     // Set callback function which will be invoked when download event occurred
     config.downloadEventCallback = (aria2::DownloadEventCallback)downloadEventCallback;
@@ -67,7 +71,7 @@ DownloadFile::DownloadFile() {
     options.push_back(std::pair<std::string, std::string>("min-split-size", "5M"));
     options.push_back(std::pair<std::string, std::string>("split", "8"));
     options.push_back(std::pair<std::string, std::string>("max-concurrent-downloads", "8"));
-
+    
     if (dFolder)
     {
         std::wstring folderPath = dFolder.Path().c_str();
@@ -86,12 +90,10 @@ DownloadFile& DownloadFile::DownloadInstance() {
     return *instance_;
 }
 
-IAsyncAction DownloadFile::setupSession() {
+int DownloadFile::setupSession() {
     // Create session object
     session = aria2::sessionNew(options, config);
 
-    // Global statistics of current aria2 session
-    globalStat = aria2::getGlobalStat(session);
     return 0;
 }
 
@@ -99,21 +101,22 @@ void DownloadFile::StartDownload()
 {
     while (true)
     {
-        int iResult = aria2::run(session, aria2::RUN_ONCE);
+        aria2::run(session, aria2::RUN_ONCE);
     }
 }
 
 int DownloadFile::addUrl(std::vector<std::string> uri)
 {   
     aria2::A2Gid gid;
+    int iResult;
 
     // Check if file already present
-    for (auto map : jsonEntry.vDownloadEntries) {
+    for (std::map<std::string, std::string> map : DownloadsJson::jsonInstance().vDownloadEntries) {
         if (map["url"] == uri[0]) 
         {
             if (std::filesystem::exists(map["filename"]))
             {
-                if (map["downloaded"] == "True")
+                if (map["fileStatus"] == "Complete")
                 {
                     Logging::Info(" already present");
 
@@ -121,87 +124,95 @@ int DownloadFile::addUrl(std::vector<std::string> uri)
                     return 3;
                 }
 
-                // Add new URI to session to download file
-                int iResult = aria2::addUri(session, &gid, uri, options);
+                // Add new URI to session, to download file
+                iResult = aria2::addUri(session, &gid, uri, options);
                 if (iResult < 0)
                 {
-                    /*std::cerr << "Failed to add download" << uri[0] << std::endl;*/
                 }
+
+                DownloadsJson::jsonInstance().fileStatus(0, "Downloading");
+                DownloadsJson::jsonInstance().gid(0, std::to_string(gid));
 
                 // return if file is present but not completely downloaded yet (paused)
                 return 2;
             }
 
             // Add new URI to session to download file
-            int iResult = aria2::addUri(session, &gid, uri, options);
+            iResult = aria2::addUri(session, &gid, uri, options);
             if (iResult < 0)
             {
-                /*std::cerr << "Failed to add download" << uri[0] << std::endl;*/
             }
-            updateJsonAndUI(gid, uri[0]);
-            // return if file downloaded last time but not present in last download directory
+            updateJson(gid, uri[0]);
+            // return 1 if file downloaded last time but not present in last download directory
             return 1;
         }
     }
+
     // Add new URI to session to download file
-    int iResult = aria2::addUri(session, &gid, uri, options);
+    iResult = aria2::addUri(session, &gid, uri, options);
+
     if (iResult < 0)
     {
-        /*std::cerr << "Failed to add download" << uri[0] << std::endl;*/
     }
-    updateJsonAndUI(gid, uri[0]);
+    updateJson(gid, uri[0]);
 
     // return if file is downloading for first time
     return EXIT_SUCCESS;
 }
 
-int DownloadFile::pause(int Index)
+void DownloadFile::pause(int Index)
 {
-    aria2::A2Gid sGid = std::stoull(jsonEntry.vDownloadEntries[Index]["gid"]);
-    return aria2::pauseDownload(session, sGid);
+    aria2::A2Gid sGid = std::stoull(DownloadsJson::jsonInstance().gid(Index));
+    int64_t size = getCurrentFileSize(Index);
+    aria2::removeDownload(session, sGid);
+    std::string f_totalSize = DownloadsJson::jsonInstance().fileSizeTotal(Index);
+    double d_percentage = static_cast<double>(size)/ std::stod(f_totalSize) * 100;
+    DownloadsJson::jsonInstance().updateJsonOnPause(Index,std::to_string(size ),std::to_string(static_cast<int>(d_percentage)));
 }
 
 int DownloadFile::Canceldownload(int Index)
 {
-    aria2::A2Gid sGid = std::stoull(jsonEntry.vDownloadEntries[Index]["gid"]);
+    aria2::A2Gid sGid = std::stoull(DownloadsJson::jsonInstance().gid(Index));
     aria2::DownloadHandle* handle = aria2::getDownloadHandle(session, sGid);
-    int downloadedSize = handle->getCompletedLength();
-    int percentage = handle->getTotalLength() > 0 ? (100 * downloadedSize / handle->getTotalLength()) : 0;
+    int64_t downloadedSize = handle->getCompletedLength();
+    int64_t percentage = handle->getTotalLength() > 0 ? (100 * downloadedSize / handle->getTotalLength()) : 0;
     aria2::deleteDownloadHandle(handle);
-    jsonEntry.updateJsonOnPause(Index, std::to_string(downloadedSize), std::to_string(percentage));
+    DownloadsJson::jsonInstance().updateJsonOnPause(Index, std::to_string(downloadedSize), std::to_string(percentage));
     return aria2::removeDownload(session, sGid);
 }
 
 int DownloadFile::ResumeDownload(int Index)
 {
-    Canceldownload(Index);
-    std::vector<std::string> uri;
-    uri.push_back(jsonEntry.vDownloadEntries[Index]["url"]);
-    addUrl(uri);
-    return EXIT_SUCCESS;
+    std::string url = DownloadsJson::jsonInstance().fileUrl(Index);
+    std::vector<std::string> vUrl;
+    vUrl.push_back(url);
+    int iRresult = addUrl(vUrl);
+    return iRresult;
 }
 
+// Update json on download complete event
 void DownloadFile::onDownloadComplete(aria2::A2Gid gid)
 {
     int Index = 0;
+
     // Check if file already present
-    for (auto map : jsonEntry.vDownloadEntries) {
+    for (std::map<std::string, std::string> map : DownloadsJson::jsonInstance().vDownloadEntries) {
         if (std::stoull(map["gid"]) == gid )
         {
             break;
         }
         Index++;
     }
-    jsonEntry.updateJsonOnDownloadComplete(Index,jsonEntry.vDownloadEntries[Index]["totalFileSize"]);
+    DownloadsJson::jsonInstance().updateJsonOnDownloadComplete(Index, DownloadsJson::jsonInstance().fileSizeTotal(Index));
 }
 
+// Return number of active downloads
 int DownloadFile::getSessionActiveDownloads()
 {
-    //return globalStat.numActive;
-    return globalStat.numActive;
+    return aria2::getGlobalStat(session).numActive;
 }
 
-IAsyncAction DownloadFile::updateJsonAndUI(aria2::A2Gid gid, std::string url)
+int DownloadFile::updateJson(aria2::A2Gid gid, std::string url)
 {   
     Sleep(1000);
     std::string substring;
@@ -210,6 +221,7 @@ IAsyncAction DownloadFile::updateJsonAndUI(aria2::A2Gid gid, std::string url)
     aria2::DownloadHandle* handle; 
     std::string size;
 
+    // Wait to get download file stats
     while (!getinfo){
         handle = aria2::getDownloadHandle(session, gid); // Get download handle of a particular download
         if (handle->getTotalLength() != 0) {
@@ -221,24 +233,28 @@ IAsyncAction DownloadFile::updateJsonAndUI(aria2::A2Gid gid, std::string url)
     handle = aria2::getDownloadHandle(session, gid); // Get download handle of a particular download
 
     aria2::FileData filedata = handle->getFile(1); // local Path of file going to download
-    int iSize = handle->getTotalLength(); // file total size
+    int64_t iSize = handle->getTotalLength(); // file total size
     size = std::to_string(iSize);
     aria2::deleteDownloadHandle(handle); // delete handle
 
-    std::string sGid = std::to_string(gid);
-    jsonEntry.addDownloadToJson(filedata.path, size, url, sGid);
+    DownloadsJson::jsonInstance().addDownloadToJson(filedata.path, size, url, std::to_string(gid));
 
     return EXIT_SUCCESS;
 }
 
-std::string DownloadFile::getDownloadFilename(int Index)
-{   
+// Return file name
+std::string DownloadFile::getDownloadFilename(aria2::A2Gid gid)
+{
     std::string substring;
     std::vector<std::string> substrings; // string vector
 
-    std::istringstream iss(jsonEntry.vDownloadEntries[Index]["filename"]);
+    aria2::DownloadHandle*  handle = aria2::getDownloadHandle(session, gid); // Get download handle of a particular download
+    aria2::FileData filedata = handle->getFile(1); // local Path of file going to download
+    aria2::deleteDownloadHandle(handle); // delete handle
 
-     //Seprate file name from full path
+    std::istringstream iss(filedata.path);
+
+    //Seprate file name from full path
     while (std::getline(iss, substring, '/'))
     {
         substrings.push_back(substring);
@@ -248,31 +264,38 @@ std::string DownloadFile::getDownloadFilename(int Index)
     return substrings.back();
 }
 
+// Return overall download speed
 int DownloadFile::getSessionDownloadSpeed()
 {
-    return globalStat.downloadSpeed;
+    return aria2::getGlobalStat(session).downloadSpeed;
 }
 
+// Return download speed for a particular Download
 int DownloadFile::getDownloadspeed(int Index)
 {
-    aria2::A2Gid sGid = std::stoull(jsonEntry.vDownloadEntries[Index]["gid"]);
+    aria2::A2Gid sGid = std::stoull(DownloadsJson::jsonInstance().gid(Index));
     aria2::DownloadHandle* handle = aria2::getDownloadHandle(session, sGid);
     int speed = handle->getDownloadSpeed();
     aria2::deleteDownloadHandle(handle);
     return speed;
 }
 
-std::string DownloadFile::getFileSize(int Index)
+// Return total size of file to download
+int64_t DownloadFile::getTotalFileSize(int Index)
 {
-    return jsonEntry.vDownloadEntries[Index]["totalFileSize"];
-    
+    aria2::A2Gid sGid = std::stoull(DownloadsJson::jsonInstance().gid(Index)); // Get gid from JSON
+    aria2::DownloadHandle* handle = aria2::getDownloadHandle(session, sGid); // Get download handle of a particular download
+    int64_t totalSize = handle->getTotalLength(); // Get file total size
+    aria2::deleteDownloadHandle(handle); // delete handle
+    return totalSize;
 }
 
-int DownloadFile::getDownloadedSize(int Index)
+// Returns the completed length of this download in bytes.
+int64_t DownloadFile::getCurrentFileSize(int Index)
 {
-    aria2::A2Gid sGid = std::stoull(jsonEntry.vDownloadEntries[Index]["gid"]);
-    aria2::DownloadHandle* handle = aria2::getDownloadHandle(session, sGid);
-    int length = handle->getCompletedLength();
+    aria2::A2Gid sGid = std::stoull(DownloadsJson::jsonInstance().gid(Index)); // Get gid from JSON
+    aria2::DownloadHandle* handle = aria2::getDownloadHandle(session, sGid); // Get download handle of a particular download
+    int64_t length = handle->getCompletedLength(); // get completed length
     aria2::deleteDownloadHandle(handle);
     return length;
 }
@@ -280,19 +303,18 @@ int DownloadFile::getDownloadedSize(int Index)
 // Return download directory of file to download
 std::string DownloadFile::getDownloadDir(int Index)
 {
-    aria2::A2Gid sGid = std::stoull(jsonEntry.vDownloadEntries[Index]["gid"]);
+    aria2::A2Gid sGid = std::stoull(DownloadsJson::jsonInstance().gid(Index));
     aria2::DownloadHandle* handle = aria2::getDownloadHandle(session, sGid);
     std::string dir = handle->getDir();
     aria2::deleteDownloadHandle(handle);
     return dir;
 }
 
-int DownloadFile::closeSession()
+// Destructor
+DownloadFile::~DownloadFile()
 {
-
-    int exitStatus = aria2::sessionFinal(session);
-    int iResult = aria2::libraryDeinit(); // Releases the global data
-    return exitStatus;
+    aria2::sessionFinal(session);
+    aria2::libraryDeinit(); // Releases the global data
 }
 
 //int main()

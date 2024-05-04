@@ -4,11 +4,21 @@
 #include <fstream>
 #include <string>
 #include <regex>
+#include <filesystem>
+#include <sstream>
+
+DownloadsJson* DownloadsJson::jsonInstance_ = nullptr;
 
 DownloadsJson::DownloadsJson()
 {   
-    //TODO: app data path
-    std::string appDataPath = "C:\\test\\";
+    std::string appDataPath = "C:\\Torroid\\";
+
+    // Check if the directory already exists
+    if (!std::filesystem::exists(appDataPath)) {
+        // Create the Torroid directory
+        std::filesystem::create_directory(appDataPath);
+    }
+
     jsonFilePath = appDataPath + jsonfilename;
     std::ifstream infile(jsonFilePath);
     if (!infile.good())
@@ -17,6 +27,13 @@ DownloadsJson::DownloadsJson()
         newfile.close();
     }
     GetJsonToVector();
+}
+
+DownloadsJson& DownloadsJson::jsonInstance() {
+    if (jsonInstance_ == nullptr) {
+        jsonInstance_ = new DownloadsJson();
+    }
+    return *jsonInstance_;
 }
 
 std::map<std::string, std::string> DownloadsJson::getKeyValuePairs(std::string &json)
@@ -78,12 +95,12 @@ void DownloadsJson::addDownloadToJson(
 )
 {
     std::string json = "[\n\t{\n"
-        "\t\t\"downloadPercent\": \"0"
-        "\",\n\t\t\"downloaded\": \"False\",\n\t\t\"downloadedSize\": \"0"
+        "\t\t\"fileDownloadPercentage\": \"0"
+        "\",\n\t\t\"fileStatus\": \"Pause\",\n\t\t\"fileSizeCurrent\": \"0"
         "\",\n\t\t\"filename\": \"" +
         filename +
         "\",\n\t\t\"gid\": \"" + gid +
-        "\",\n\t\t\"totalFileSize\": \"" + totalFileSize +
+        "\",\n\t\t\"fileSizeTotal\": \"" + totalFileSize +
         "\",\n\t\t\"url\": \"" + url + "\"\n\t}\n]";
 
 
@@ -116,12 +133,12 @@ void DownloadsJson::addDownloadToJson(
 
         // Add new Download entry to vector
         vLines.insert(vLines.begin() + 1, "\t{");
-        vLines.insert(vLines.begin() + 2, "\t\t\"downloadPercent\": \"0\",");
-        vLines.insert(vLines.begin() + 3, "\t\t\"downloaded\": \"False\",");
-        vLines.insert(vLines.begin() + 4, "\t\t\"downloadedSize\": \"0\",");
+        vLines.insert(vLines.begin() + 2, "\t\t\"fileDownloadPercentage\": \"0\",");
+        vLines.insert(vLines.begin() + 3, "\t\t\"fileStatus\": \"Pause\",");
+        vLines.insert(vLines.begin() + 4, "\t\t\"fileSizeCurrent\": \"0\",");
         vLines.insert(vLines.begin() + 5, "\t\t\"filename\": \"" + filename + "\",");
         vLines.insert(vLines.begin() + 6, "\t\t\"gid\": \"" + gid + "\",");
-        vLines.insert(vLines.begin() + 7, "\t\t\"totalFileSize\": \"" + totalFileSize + "\",");
+        vLines.insert(vLines.begin() + 7, "\t\t\"fileSizeTotal\": \"" + totalFileSize + "\",");
         vLines.insert(vLines.begin() + 8, "\t\t\"url\": \"" + url + "\"");
         vLines.insert(vLines.begin() + 9, "\t},");
 
@@ -137,6 +154,8 @@ void DownloadsJson::addDownloadToJson(
         outFile.close();
     }
     vDownloadEntries.insert(vDownloadEntries.begin(), getKeyValuePairs(json));
+    fileStatus(0, "Downloading");
+    
 }
 
 void DownloadsJson::updateJsonOnPause(size_t index, std::string newDownloadedSize, std::string newdownloadPercent)
@@ -152,12 +171,15 @@ void DownloadsJson::updateJsonOnPause(size_t index, std::string newDownloadedSiz
         vLines.push_back(line);
     }
 
-    Logging::Info("updating");
     // Update download state on pause
-    vDownloadEntries[index]["downloadedSize"] = newDownloadedSize;
-    vLines[lineToUpdate + 2] = "\t\t\"downloadedSize\": \"" + newDownloadedSize + "\",";
-    vDownloadEntries[index]["downloadPercent"] = newdownloadPercent;
-    vLines[lineToUpdate] = "\t\t\"downloadPercent\": \"" + newdownloadPercent + "\",";
+    vDownloadEntries[index]["fileDownloadPercentage"] = newdownloadPercent;
+    vLines[lineToUpdate] = "\t\t\"fileDownloadPercentage\": \"" + newdownloadPercent + "\",";
+
+    vLines[lineToUpdate + 1] = "\t\t\"fileStatus\": \"Pause\",";
+    vDownloadEntries[index]["fileStatus"] = "Pause";
+    
+    vDownloadEntries[index]["fileSizeCurrent"] = newDownloadedSize;
+    vLines[lineToUpdate + 2] = "\t\t\"fileSizeCurrent\": \"" + newDownloadedSize + "\",";
 
     // Write all lines back to the file
     std::ofstream outFile(jsonFilePath);
@@ -165,7 +187,6 @@ void DownloadsJson::updateJsonOnPause(size_t index, std::string newDownloadedSiz
     {
         outFile << updatedLine << '\n';
     }
-    Logging::Info("updated");
     outFile.close();
 }
 
@@ -183,14 +204,14 @@ void DownloadsJson::updateJsonOnDownloadComplete(size_t index, std::string total
         lines.push_back(line);
     }
 
-    vDownloadEntries[index]["downloadPercent"] = "100";
-    lines[lineToUpdate] = "\t\t\"downloadPercent\": \"100\",";
+    vDownloadEntries[index]["fileDownloadPercentage"] = "100";
+    lines[lineToUpdate] = "\t\t\"fileDownloadPercentage\": \"100\",";
 
-    vDownloadEntries[index]["downloaded"] = "True";
-    lines[lineToUpdate + 1] = "\t\t\"downloaded\": \"True\",";
+    vDownloadEntries[index]["fileStatus"] = "Complete";
+    lines[lineToUpdate + 1] = "\t\t\"fileStatus\": \"Complete\",";
 
-    vDownloadEntries[index]["downloadedSize"] = totalDownloadedSize;
-    lines[lineToUpdate + 2] = "\t\t\"downloadedSize\": \"" + totalDownloadedSize + "\",";
+    vDownloadEntries[index]["fileSizeCurrent"] = totalDownloadedSize;
+    lines[lineToUpdate + 2] = "\t\t\"fileSizeCurrent\": \"" + totalDownloadedSize + "\",";
 
     // Write all lines back to the file
     std::ofstream outFile(jsonFilePath);
@@ -254,4 +275,74 @@ void DownloadsJson::writeToJsonOnexit()
     std::ofstream outputFile(jsonFilePath);
     outputFile << jsonString;
     outputFile.close();
+}
+
+std::string DownloadsJson::fileDownloadPercentage(int Index)
+{
+    return vDownloadEntries[Index]["fileDownloadPercentage"];
+}
+
+void DownloadsJson::fileDownloadPercentage(int Index, std::string fileDownloadPercentage)
+{
+    vDownloadEntries[Index]["fileDownloadPercentage"] = fileDownloadPercentage;
+}
+
+std::string DownloadsJson::fileStatus(int Index)
+{
+    return vDownloadEntries[Index]["fileStatus"];
+}
+
+void DownloadsJson::fileStatus(int Index, std::string fileStatus)
+{
+    vDownloadEntries[Index]["fileStatus"] = fileStatus;
+}
+
+std::string DownloadsJson::fileSizeCurrent(int Index)
+{
+    return vDownloadEntries[Index]["fileSizeCurrent"];
+}
+
+void DownloadsJson::fileSizeCurrent(int Index, std::string fileSizeCurrent)
+{
+    vDownloadEntries[Index]["fileSizeCurrent"] = fileSizeCurrent;
+}
+
+std::string DownloadsJson::filename(int Index)
+{
+    return vDownloadEntries[Index]["filename"];
+}
+
+void DownloadsJson::filename(int Index, std::string filename)
+{
+    vDownloadEntries[Index]["filename"] = filename;
+}
+
+std::string DownloadsJson::gid(int Index)
+{
+    return vDownloadEntries[Index]["gid"];
+}
+
+void DownloadsJson::gid(int Index, std::string gid)
+{
+    vDownloadEntries[Index]["gid"] = gid;
+}
+
+std::string DownloadsJson::fileSizeTotal(int Index)
+{
+    return vDownloadEntries[Index]["fileSizeTotal"];
+}
+
+void DownloadsJson::fileSizeTotal(int Index, std::string fileSizeTotal)
+{
+    vDownloadEntries[Index]["fileSizeTotal"] = fileSizeTotal;
+}
+
+std::string DownloadsJson::fileUrl(int Index)
+{
+    return vDownloadEntries[Index]["url"];
+}
+
+void DownloadsJson::fileUrl(int Index, std::string fileUrl)
+{
+    vDownloadEntries[Index]["url"] = fileUrl;
 }

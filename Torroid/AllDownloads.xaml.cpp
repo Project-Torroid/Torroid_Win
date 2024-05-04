@@ -24,9 +24,7 @@ namespace winrt::Torroid::implementation
 
         std::thread PopulateUi([&]() {
 
-            DownloadsJson jsonFile;
-
-            size_t v_size = jsonFile.vDownloadEntries.size();
+            size_t v_size = DownloadsJson::jsonInstance().vDownloadEntries.size();
 
             for (size_t i = 0; i < v_size; i++)
             {
@@ -82,13 +80,12 @@ namespace winrt::Torroid::implementation
 
     void AllDownloads::addToDownloadsLV(int index, bool isFirstCall)
     {
-        DownloadsJson jsonFile;
-        std::string s_name =jsonFile.vDownloadEntries[index]["filename"];
+        std::string s_name = DownloadsJson::jsonInstance().filename(index);
 
         //Logging::Info("Download File Name: " + s_name);
         hstring h_name = to_hstring(Utils::FilePath_to_FileName(s_name));
 
-        std::string s_size = jsonFile.vDownloadEntries[index]["totalFileSize"];
+        std::string s_size = DownloadsJson::jsonInstance().fileSizeTotal(index);
         //Logging::Info("Download File Size: " + s_size);
         hstring h_size = to_hstring(Utils::bytesToSize(s_size));
 
