@@ -4,14 +4,11 @@
 #include "MainWindow.g.cpp"
 #endif
 
-#include <winrt/Microsoft.UI.Windowing.h>
-#include <winrt/Windows.Storage.h>
-#include <winrt/Windows.UI.Xaml.Interop.h>
-
 #include "SettingsPage.xaml.h"
 
 using namespace winrt;
 using namespace Microsoft::UI::Xaml;
+using namespace Microsoft::UI::Xaml::Media::Animation;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -43,9 +40,13 @@ namespace winrt::Torroid::implementation
         Controls::NavigationView const& sender, 
         Controls::NavigationViewSelectionChangedEventArgs const& args)
     {
+        // Create the slide transition and set the transition effect to FromLeft.
+        SlideNavigationTransitionInfo slideEffect = SlideNavigationTransitionInfo();
+        slideEffect.Effect(SlideNavigationTransitionEffect(SlideNavigationTransitionEffect::FromLeft));
+
         if (args.IsSettingsSelected())
         {
-            MainWindowDownloadFilesFrame().Navigate(xaml_typename<Torroid::SettingsPage>());
+            MainWindowDownloadFilesFrame().Navigate(xaml_typename<Torroid::SettingsPage>(), nullptr, slideEffect);
         }
         else {
 
@@ -56,7 +57,7 @@ namespace winrt::Torroid::implementation
             winrt::hstring pageName = L"Torroid.AllDownloads";
             auto pageType = xaml_typename<Controls::Frame>();
             pageType.Name = pageName;
-            MainWindowDownloadFilesFrame().Navigate(pageType);
+            MainWindowDownloadFilesFrame().Navigate(pageType, nullptr, slideEffect);
         }
 
     }
