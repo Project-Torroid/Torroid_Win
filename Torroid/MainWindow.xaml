@@ -43,11 +43,11 @@
 
         <!--Category View-->
         <NavigationView x:Name="MainWindowNav" 
-                        PaneDisplayMode="Left" 
+                        PaneDisplayMode="Auto" 
                         IsSettingsVisible="True" 
-                        Padding="25" 
                         Grid.Row="1"
-                        SelectionChanged="MainWindowNav_SelectionChanged">
+                        SelectionChanged="MainWindowNav_SelectionChanged"
+                        CompactModeThresholdWidth="0">
             <NavigationView.MenuItems>
                 <NavigationViewItem Content="All Downloads" Tag="AllDownloads" Icon="Folder">
                     <NavigationViewItem.MenuItems>
