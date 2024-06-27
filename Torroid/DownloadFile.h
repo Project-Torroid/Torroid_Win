@@ -59,8 +59,13 @@ public:
         */
     void pause(int Index);
 
-    // Cancle download
-    int Canceldownload(int Index);
+    /*
+        Cancle download
+        Arguments:
+        1. index of download to remove
+        2. true if delete file from disk
+    */
+    int DownloadFile::removeDownload(int Index, bool deletefromdisk);
 
     // Resume paused download
     int ResumeDownload(int Index);

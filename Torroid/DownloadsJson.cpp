@@ -244,7 +244,7 @@ void DownloadsJson::updateJsonOnDownloadComplete(size_t index, std::string total
     outFile.close();
 }
 
-void DownloadsJson::deleteDownload(size_t index)
+void DownloadsJson::RemoveDownloadEntry(int index)
 {
     std::ifstream inFile(jsonFilePath);
     std::vector<std::string> lines;
@@ -256,11 +256,11 @@ void DownloadsJson::deleteDownload(size_t index)
         lines.push_back(line);
     }
 
-    if (lines.size() > (10 + (index * 8)))
+    if (lines.size() > (10 + (index * 9)))
     {
         // Delete download element from json file and json object entry vector
-        lines.erase(lines.begin() + 1 + (index * 7), lines.begin() + 9 + (index * 7));
-        vDownloadEntries.erase(vDownloadEntries.begin() + index);
+        lines.erase(lines.begin() + 1+ (index * 9), lines.begin() + 10 + (index * 9));  // delete from file
+        vDownloadEntries.erase(vDownloadEntries.begin() + index); // delete from vector
 
         // Write all lines back to the file
         std::ofstream outFile(jsonFilePath);

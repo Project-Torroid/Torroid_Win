@@ -71,7 +71,7 @@ public:
      Arguments :
      1. Index
      */
-    void DownloadsJson::deleteDownload(size_t index);
+    void DownloadsJson::RemoveDownloadEntry(int index);
 
     // Write json info to json file on exit
     void DownloadsJson::writeToJsonOnexit();

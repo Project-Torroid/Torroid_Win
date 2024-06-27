@@ -170,15 +170,34 @@ void DownloadFile::pause(int Index)
     DownloadsJson::jsonInstance().updateJsonOnPause(Index,std::to_string(size ),std::to_string(static_cast<int>(d_percentage)));
 }
 
-int DownloadFile::Canceldownload(int Index)
+int DownloadFile::removeDownload(int Index, bool deletefromdisk)
 {
-    aria2::A2Gid sGid = std::stoull(DownloadsJson::jsonInstance().gid(Index));
-    aria2::DownloadHandle* handle = aria2::getDownloadHandle(session, sGid);
-    int64_t downloadedSize = handle->getCompletedLength();
-    int64_t percentage = handle->getTotalLength() > 0 ? (100 * downloadedSize / handle->getTotalLength()) : 0;
-    aria2::deleteDownloadHandle(handle);
-    DownloadsJson::jsonInstance().updateJsonOnPause(Index, std::to_string(downloadedSize), std::to_string(percentage));
-    return aria2::removeDownload(session, sGid);
+    int iResult = 0;
+    std::string filePath = DownloadsJson::jsonInstance().filename(Index);
+    
+    if (DownloadsJson::jsonInstance().fileStatus(Index) == "Downloading")
+    {
+        aria2::A2Gid gid = std::stoull(DownloadsJson::jsonInstance().gid(Index));
+        iResult = aria2::removeDownload(session, gid);
+        if (iResult)
+        {
+            return iResult;
+        }
+    }
+
+    if (deletefromdisk)
+    {
+        std::string aria2FilePath = filePath + ".aria2";
+        if (std::filesystem::exists(aria2FilePath))
+{
+            remove(aria2FilePath.c_str());
+        }
+        remove(filePath.c_str());
+    }
+    DownloadsJson::jsonInstance().RemoveDownloadEntry(Index); // delete entry fron json
+
+    return iResult;
+    
 }
 
 int DownloadFile::ResumeDownload(int Index)
