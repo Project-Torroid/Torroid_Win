@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "Utils.h"
 
+#include <iomanip>
+
 using namespace winrt::Torroid;
 
 std::string Utils::bytesToSize(const std::string& bytesStr) {
@@ -10,19 +12,23 @@ std::string Utils::bytesToSize(const std::string& bytesStr) {
         const int megabyte = 1024 * 1024;
         const int gigabyte = megabyte * 1024;
 
-        if (bytes < kilobyte)
-        {
-            return std::to_string(bytes) + " Bytes";
+        std::stringstream ss;
+        ss << std::fixed << std::setprecision(2);
+
+        if (bytes < kilobyte) {
+            ss << bytes << " Bytes";
         }
-        if (bytes < megabyte) {
-            return std::to_string(bytes / kilobyte) + " KB";
+        else if (bytes < megabyte) {
+            ss << (bytes / static_cast<double>(kilobyte)) << " KB";
         }
         else if (bytes < gigabyte) {
-            return std::to_string(bytes / megabyte) + " MB";
+            ss << (bytes / static_cast<double>(megabyte)) << " MB";
         }
         else {
-            return std::to_string(bytes / gigabyte) + " GB";
+            ss << (bytes / static_cast<double>(gigabyte)) << " GB";
         }
+
+        return ss.str();
     }
     catch (...) {
         return "Invalid input";
