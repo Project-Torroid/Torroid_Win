@@ -17,6 +17,8 @@ namespace winrt::Torroid::implementation
         
         void PauseResumeButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
 
+        void PropertiesButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        
     private:
         Torroid::DownloadsViewModel m_mainViewModel;
     };

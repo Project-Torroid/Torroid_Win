@@ -12,11 +12,25 @@
     <Page.Resources>
         <DataTemplate x:Key="DownlodsLVTemplate" x:DataType="local:Downloads">
             <Grid Background="{ThemeResource LayerOnMicaBaseAltFillColorDefault}" Margin="0,5" Padding="10,5" CornerRadius="10">
+
+                <Grid.ContextFlyout>
+                    <CommandBarFlyout Placement="Bottom" ShowMode="Standard" AlwaysExpanded="False">
+                        <AppBarButton Label="Update URL" Icon="Link" ToolTipService.ToolTip="Update URL" />
+                        <AppBarButton Label="Retry" Icon="Refresh" ToolTipService.ToolTip="Restart the Download" />
+                        <AppBarButton Label="Properties" Icon="Document" ToolTipService.ToolTip="Open Properties Page" Click="PropertiesButton_Click"/>
+                        <CommandBarFlyout.SecondaryCommands>
+                            <AppBarButton x:Name="OpenFile" Label="Open File" />
+                            <AppBarButton x:Name="OpenExplorer" Label="Open File In Explorer" />
+                        </CommandBarFlyout.SecondaryCommands>
+                    </CommandBarFlyout>
+                </Grid.ContextFlyout>
+
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
+
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="auto"/>

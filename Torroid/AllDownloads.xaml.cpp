@@ -8,6 +8,7 @@
 #include "logging.h"
 #include "DownloadsJson.h"
 #include "Utils.h"
+#include "PropertiesPage.xaml.h"
 
 
 using namespace winrt;
@@ -104,5 +105,22 @@ namespace winrt::Torroid::implementation
             // Set FontIcon to Pause icon
             fontIcon.Glyph(L"\uF8AE");
         }
+    }
+    void AllDownloads::PropertiesButton_Click(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::RoutedEventArgs const& e)
+    {
+        auto button = sender.as<Microsoft::UI::Xaml::Controls::AppBarButton>();
+        auto item = button.DataContext().as<Torroid::Downloads>();
+
+        Microsoft::UI::Xaml::Controls::ContentDialog dialog;
+        dialog.XamlRoot(Content().XamlRoot());
+        dialog.Title(winrt::box_value(L"Properties"));
+        dialog.PrimaryButtonText(L"Save");
+        dialog.CloseButtonText(L"Cancel");
+        dialog.DefaultButton(winrt::Microsoft::UI::Xaml::Controls::ContentDialogButton::Primary);
+
+        Torroid::PropertiesPage dialogContent = winrt::make<Torroid::implementation::PropertiesPage>(item.FileName(), item.Size());
+        dialog.Content(dialogContent);
+
+        dialog.ShowAsync();
     }
 }
