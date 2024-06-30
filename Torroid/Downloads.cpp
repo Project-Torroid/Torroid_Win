@@ -27,6 +27,12 @@ namespace winrt::Torroid::implementation
         if (m_isDownloading != value)
         {
             m_isDownloading = value;
+            if (IsDownloading())
+            {
+                PauseResumeIcon(L"\uF8AE");
+            }
+            else PauseResumeIcon(L"\uF5B0");
+            m_propertyChanged(*this, PropertyChangedEventArgs{ L"IsDownloading" });
         }
     }
 
@@ -72,6 +78,24 @@ namespace winrt::Torroid::implementation
     {
         m_speed = value;
         m_propertyChanged(*this, PropertyChangedEventArgs{ L"Speed" });
+    }
+
+    hstring Downloads::PauseResumeIcon()
+    {
+        if (IsDownloading()) {
+            return L"\uF8AE";
+        }
+        else {
+            return L"\uF5B0";
+        }
+    }
+    void Downloads::PauseResumeIcon(hstring const& value)
+    {
+        if (m_pauseResumeIcon != value)
+        {
+            m_pauseResumeIcon = value;
+            m_propertyChanged(*this, PropertyChangedEventArgs{ L"PauseResumeIcon" });
+        }
     }
 
     winrt::event_token Downloads::PropertyChanged(PropertyChangedEventHandler const& handler)
