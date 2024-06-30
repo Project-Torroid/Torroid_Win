@@ -32,9 +32,9 @@
                 
                 <!--Progress Bar-->
                 <ProgressBar Grid.Row="1" Value="{x:Bind DPercentage, Mode=OneWay}" Grid.ColumnSpan="2" Minimum="0" Maximum="100" />
-                
-                <!--Play/Pause Download Button-->
-                <Button Grid.Row="1" Grid.Column="2" Margin="5,0" Click="PlayPauseButton_Clicked">
+
+                <!--Pause/Resume Download Button-->
+                <Button Grid.Row="1" Grid.Column="2" Margin="5,0" Click="PauseResumeButton_Click">
                     <FontIcon Glyph="&#xF5B0;" />
                 </Button>
                 
@@ -84,7 +84,7 @@
                 </MenuBarItem>
             </MenuBar>
             <CommandBar Background="Transparent" IsOpen="False" DefaultLabelPosition="Right" Grid.Column="1">
-                <AppBarButton Icon="Add" Label="Add" Click="addDownloadBtnClicked" />
+                <AppBarButton Icon="Add" Label="Add" Click="AddDownloadButton_Click" />
                 <AppBarButton Icon="Pause" Label="Pause" />
                 <AppBarButton Icon="Delete" Label="Delete"/>
                 <CommandBar.SecondaryCommands>

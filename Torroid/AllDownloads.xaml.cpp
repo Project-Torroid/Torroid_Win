@@ -31,7 +31,7 @@ namespace winrt::Torroid::implementation
         return m_mainViewModel;
     }
 
-    void AllDownloads::addDownloadBtnClicked(IInspectable const&, RoutedEventArgs const&)
+    void AllDownloads::AddDownloadButton_Click(IInspectable const&, RoutedEventArgs const&)
     {
         winrt::Microsoft::UI::Xaml::Controls::ContentDialog dialog;
         dialog.XamlRoot(Content().XamlRoot());
@@ -81,7 +81,7 @@ namespace winrt::Torroid::implementation
         MainViewModel().DownloadsOBVector().GetAt(0).IsDownloading(true);
     }
 
-    void AllDownloads::PlayPauseButton_Clicked(IInspectable const& sender, RoutedEventArgs const& e)
+    void AllDownloads::PauseResumeButton_Click(IInspectable const& sender, RoutedEventArgs const& e)
     {
         auto button = sender.as<Microsoft::UI::Xaml::Controls::Button>();
         auto item = button.DataContext().as<Torroid::Downloads>();
@@ -92,8 +92,8 @@ namespace winrt::Torroid::implementation
         if (item.IsDownloading())
         {
             // Pause the Download
-			DownloadFile::DownloadInstance().pause(index);
-            // Set FontIcon to play icon when downloading
+            DownloadFile::DownloadInstance().pause(index);
+            // Set FontIcon to Resume icon
             fontIcon.Glyph(L"\uF5B0");
         }
         else
@@ -101,7 +101,7 @@ namespace winrt::Torroid::implementation
             // Resume the Download
             DownloadFile::DownloadInstance().ResumeDownload(index);
             MainViewModel().DownloadsOBVector().GetAt(index).IsDownloading(true);
-            // Set FontIcon to pause icon when paused
+            // Set FontIcon to Pause icon
             fontIcon.Glyph(L"\uF8AE");
         }
     }
