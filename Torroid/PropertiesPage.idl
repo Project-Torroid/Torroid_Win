@@ -1,0 +1,9 @@
+namespace Torroid
+{
+    [default_interface]
+    runtimeclass PropertiesPage : Microsoft.UI.Xaml.Controls.Page
+    {
+        PropertiesPage(String fName, String fSize);
+        Int32 MyProperty;
+    }
+}
