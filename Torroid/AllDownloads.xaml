@@ -35,7 +35,7 @@
 
                 <!--Pause/Resume Download Button-->
                 <Button Grid.Row="1" Grid.Column="2" Margin="5,0" Click="PauseResumeButton_Click">
-                    <FontIcon Glyph="&#xF5B0;" />
+                    <FontIcon Glyph="{x:Bind PauseResumeIcon, Mode=OneWay }" />
                 </Button>
                 
                 <!--Remove Download Button-->
