@@ -10,7 +10,7 @@
     NavigationCacheMode="Enabled">
 
     <Page.Resources>
-        <DataTemplate x:Key="DownlodsListViewTemplate" x:DataType="local:Downloads">
+        <DataTemplate x:Key="DownlodsLVTemplate" x:DataType="local:Downloads">
             <Grid Background="{ThemeResource LayerOnMicaBaseAltFillColorDefault}" Margin="0,5" Padding="10,5" CornerRadius="10">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
@@ -110,6 +110,8 @@
 
         <!--Download View-->
 
-        <ListView Grid.Row="1" x:Name="DownloadsLV" ItemTemplate="{StaticResource DownlodsListViewTemplate}"/>
+        <ListView Grid.Row="1" x:Name="DownloadsLV" 
+                  ItemTemplate="{StaticResource DownlodsLVTemplate}" 
+                  SelectionMode="Single"/>
     </Grid>
 </Page>
