@@ -2,17 +2,11 @@
 #include "Downloads.h"
 #include "Downloads.g.cpp"
 
-#include <winrt/Windows.System.Threading.h>
-#include <winrt/Windows.ApplicationModel.Core.h>
-#include <winrt/Windows.UI.Core.h>
 #include "logging.h"
 
 using namespace winrt;
 using namespace Microsoft::UI::Xaml;
-using namespace Microsoft::UI::Xaml::Data;
-using namespace Windows::System::Threading;
-using namespace Windows::ApplicationModel::Core;
-using namespace Windows::UI::Core; 
+using namespace Microsoft::UI::Xaml::Data; 
 
 namespace winrt::Torroid::implementation
 {
