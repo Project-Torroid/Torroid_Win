@@ -2,6 +2,7 @@
 #include "Utils.h"
 
 #include <iomanip>
+#include "DownloadsJson.h"
 
 using namespace winrt::Torroid;
 
@@ -42,11 +43,27 @@ std::string Utils::FilePath_to_FileName(std::string filePath)
     std::istringstream iss(filePath);
 
     //Seprate file name from full path
-    while (std::getline(iss, substring, '/'))
+    while (std::getline(iss, substring, '\\'))
     {
         substrings.push_back(substring);
     }
 
     // Return file name 
     return substrings.back();
+}
+
+std::string Utils::FilePath_to_FolderPath(std::string filePath)
+{
+    // Get the folder path.
+    size_t lastSlashPos = filePath.find_last_of('\\');
+    if (lastSlashPos != std::string::npos)
+    {
+        filePath = filePath.substr(0, lastSlashPos);
+    }
+    return filePath;
+}
+
+size_t Utils::FileName_to_Index(hstring const& fileName)
+{
+    return DownloadsJson::jsonInstance().getIndex(winrt::to_string(fileName));
 }
