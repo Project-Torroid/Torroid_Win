@@ -8,7 +8,7 @@
   IgnorableNamespaces="uap rescap">
 
   <Identity
-    Name="fca43a2f-d437-4544-85ee-2c052f83daba"
+    Name="Torroid.TorroidDownloadManager"
     Publisher="CN=hraj9"
     Version="1.0.0.0" />
 
