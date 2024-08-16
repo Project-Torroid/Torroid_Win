@@ -123,4 +123,25 @@ namespace winrt::Torroid::implementation
 
         dialog.ShowAsync();
     }
+    
+    IAsyncAction AllDownloads::RemoveDownloadButton_Click(IInspectable const& sender, RoutedEventArgs const& e)
+    {
+		auto button = sender.as<Controls::Button>();
+		auto item = button.DataContext().as<Torroid::Downloads>();
+
+        removeDownloadContentDialog().XamlRoot(Content().XamlRoot());
+        Controls::ContentDialogResult result{ co_await removeDownloadContentDialog().ShowAsync() };
+
+        if(result == Controls::ContentDialogResult::Primary)
+		{
+			// Remove the item from the ListView
+			int index = Utils::FileName_to_Index(item.FileName());
+			if(item.IsDownloading())
+			{
+				DownloadFile::DownloadInstance().pause(index);
+			}
+            DownloadFile::DownloadInstance().removeDownload(index, ConfirmFileDeletionCheckBox().IsChecked().GetBoolean());
+			MainViewModel().DownloadsOBVector().RemoveAt(index);
+		}
+    }
 }
