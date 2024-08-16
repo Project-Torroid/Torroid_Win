@@ -14,15 +14,16 @@
             <Grid Background="{ThemeResource LayerOnMicaBaseAltFillColorDefault}" Margin="0,4" Padding="12,0" CornerRadius="4">
 
                 <Grid.ContextFlyout>
-                    <CommandBarFlyout Placement="Bottom" ShowMode="Standard" AlwaysExpanded="False">
-                        <AppBarButton Label="Update URL" Icon="Link" ToolTipService.ToolTip="Update URL" />
-                        <AppBarButton Label="Retry" Icon="Refresh" ToolTipService.ToolTip="Restart the Download" />
-                        <AppBarButton Label="Properties" Icon="Document" ToolTipService.ToolTip="Open Properties Page" Click="PropertiesButton_Click"/>
-                        <CommandBarFlyout.SecondaryCommands>
-                            <AppBarButton x:Name="OpenFile" Label="Open File" />
-                            <AppBarButton x:Name="OpenExplorer" Label="Open File In Explorer" />
-                        </CommandBarFlyout.SecondaryCommands>
-                    </CommandBarFlyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem Icon="Link" Text="Update URL" />
+                        <MenuFlyoutItem Icon="Refresh" Text="Retry"/>
+                        <MenuFlyoutItem Icon="Document" Text="Properties" Click="PropertiesButton_Click"/>
+                        <MenuFlyoutSeparator/>
+                        <MenuFlyoutSubItem Icon="More" Text="More">
+                            <MenuFlyoutItem x:Name="OpenFile" Text="Open File" Click="OpenFile_Click" />
+                            <MenuFlyoutItem x:Name="OpenExplorer" Text="Open File In Explorer" Click="OpenExplorer_Click"/>
+                        </MenuFlyoutSubItem>
+                    </MenuFlyout>
                 </Grid.ContextFlyout>
 
                 <Grid.RowDefinitions>

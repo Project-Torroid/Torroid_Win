@@ -123,7 +123,85 @@ namespace winrt::Torroid::implementation
 
         dialog.ShowAsync();
     }
-    
+
+    void AllDownloads::OpenExplorer_Click(IInspectable const& sender, RoutedEventArgs const& e)
+    {
+        auto button = sender.as<Controls::MenuFlyoutItem>();
+        auto item = button.DataContext().as<Torroid::Downloads>();
+
+        std::string filePath = DownloadsJson::jsonInstance().filename(Utils::FileName_to_Index(item.FileName()));
+        std::string folderPath = Utils::FilePath_to_FolderPath(filePath);
+
+        Windows::System::Launcher::LaunchFolderPathAsync(winrt::to_hstring(folderPath));
+    }
+
+    IAsyncAction AllDownloads::OpenFile_Click(IInspectable const& sender, RoutedEventArgs const& e)
+    {
+        auto button = sender.as<Controls::MenuFlyoutItem>();
+        auto item = button.DataContext().as<Torroid::Downloads>();
+
+        // Get the file path.
+        std::string filePath = DownloadsJson::jsonInstance().filename(Utils::FileName_to_Index(item.FileName()));
+
+        // Get the folder path.
+        std::string folderPath = Utils::FilePath_to_FolderPath(filePath);
+
+        try
+        {
+            // Get the folder.
+            Windows::Storage::StorageFolder installFolder{ co_await Windows::Storage::StorageFolder::GetFolderFromPathAsync(winrt::to_hstring(folderPath)) };
+
+            // Get the file.
+            Windows::Storage::StorageFile file{ co_await installFolder.GetFileAsync(item.FileName()) };
+
+            if (file)
+            {
+                // Launch the retrieved file.
+                bool success{ co_await Windows::System::Launcher::LaunchFileAsync(file) };
+                if (success)
+                {
+                    // File launched.
+                }
+                else
+                {
+                    // File launch failed.
+                }
+            }
+            else
+            {
+                // Couldn't find file.
+            }
+        }
+        catch (winrt::hresult_error const& ex)
+        {
+            // File launch failed.
+            winrt::hresult hr = ex.code();
+            winrt::hstring message = ex.message();
+
+            ContentDialog dialog;
+            dialog.XamlRoot(Content().XamlRoot());
+            dialog.Title(winrt::box_value(L"File launch failed."));
+            dialog.CloseButtonText(L"Cancel");
+            dialog.DefaultButton(Controls::ContentDialogButton::Close);
+
+            StackPanel stackPanel;
+            stackPanel.Orientation(Controls::Orientation::Vertical);
+
+            TextBlock errorCode;
+            errorCode.Text(L"Error Code: " + winrt::to_hstring(hr));
+            errorCode.TextWrapping(TextWrapping::Wrap);
+
+            TextBlock errorMessage;
+            errorMessage.Text(message);
+            errorMessage.TextWrapping(TextWrapping::Wrap);
+
+            stackPanel.Children().Append(errorCode);
+            stackPanel.Children().Append(errorMessage);
+            dialog.Content(stackPanel);
+
+            dialog.ShowAsync();
+        }
+    }
     IAsyncAction AllDownloads::RemoveDownloadButton_Click(IInspectable const& sender, RoutedEventArgs const& e)
     {
 		auto button = sender.as<Controls::Button>();
