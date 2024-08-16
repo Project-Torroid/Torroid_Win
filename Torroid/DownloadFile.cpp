@@ -172,32 +172,19 @@ void DownloadFile::pause(int Index)
 
 int DownloadFile::removeDownload(int Index, bool deletefromdisk)
 {
-    int iResult = 0;
     std::string filePath = DownloadsJson::jsonInstance().filename(Index);
-    
-    if (DownloadsJson::jsonInstance().fileStatus(Index) == "Downloading")
-    {
-        aria2::A2Gid gid = std::stoull(DownloadsJson::jsonInstance().gid(Index));
-        iResult = aria2::removeDownload(session, gid);
-        if (iResult)
-        {
-            return iResult;
-        }
-    }
+    std::string aria2FilePath = filePath + ".aria2";
 
     if (deletefromdisk)
     {
-        std::string aria2FilePath = filePath + ".aria2";
         if (std::filesystem::exists(aria2FilePath))
-{
+        {
             remove(aria2FilePath.c_str());
         }
         remove(filePath.c_str());
     }
     DownloadsJson::jsonInstance().RemoveDownloadEntry(Index); // delete entry fron json
-
-    return iResult;
-    
+    return EXIT_SUCCESS;
 }
 
 int DownloadFile::ResumeDownload(int Index)

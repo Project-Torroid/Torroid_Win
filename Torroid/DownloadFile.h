@@ -65,7 +65,7 @@ public:
         1. index of download to remove
         2. true if delete file from disk
     */
-    int DownloadFile::removeDownload(int Index, bool deletefromdisk);
+    int removeDownload(int Index, bool deletefromdisk);
 
     // Resume paused download
     int ResumeDownload(int Index);
