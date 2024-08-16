@@ -13,6 +13,8 @@
 
 using namespace winrt;
 using namespace Microsoft::UI::Xaml;
+using namespace Microsoft::UI::Xaml::Controls;
+using namespace Windows::Foundation;
 using namespace Windows::Foundation::Collections;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -107,11 +109,12 @@ namespace winrt::Torroid::implementation
         }
     }
     void AllDownloads::PropertiesButton_Click(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::RoutedEventArgs const& e)
+    void AllDownloads::PropertiesButton_Click(IInspectable const& sender, RoutedEventArgs const& e)
     {
-        auto button = sender.as<Microsoft::UI::Xaml::Controls::AppBarButton>();
+        auto button = sender.as<Controls::MenuFlyoutItem>();
         auto item = button.DataContext().as<Torroid::Downloads>();
 
-        Microsoft::UI::Xaml::Controls::ContentDialog dialog;
+        ContentDialog dialog;
         dialog.XamlRoot(Content().XamlRoot());
         dialog.Title(winrt::box_value(L"Properties"));
         dialog.PrimaryButtonText(L"Save");

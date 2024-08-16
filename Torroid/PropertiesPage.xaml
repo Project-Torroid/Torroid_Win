@@ -9,18 +9,16 @@
     mc:Ignorable="d">
 
     <StackPanel Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Center">
-        <StackPanel Orientation="Horizontal">
-            <TextBlock Text="File Name: " Margin="2" />
-            <TextBlock x:Name="FName" Margin="2" />
-        </StackPanel>
+        <TextBox x:Name="FName" Header="File Name: " Margin="2" TextWrapping="Wrap"/>
+
         <StackPanel Orientation="Horizontal">
             <TextBlock Text="File Size: " Margin="2" />
             <TextBlock x:Name="FSize" Margin="2" />
         </StackPanel>
+        
+        <TextBox x:Name="FUrl" Header="File URL: " Margin="2" TextWrapping="Wrap" />
+        
+        <TextBox x:Name="FStatus" Header="File Status" Margin="2" IsReadOnly="True"/>
 
-        <StackPanel Orientation="Horizontal">
-            <TextBlock Text="File URL: " Margin="2" />
-            <TextBlock x:Name="FUrl" Margin="2" />
-        </StackPanel>
     </StackPanel>
 </Page>

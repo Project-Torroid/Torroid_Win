@@ -4,6 +4,9 @@
 #include "PropertiesPage.g.cpp"
 #endif
 
+#include "DownloadsJson.h"
+#include "Utils.h"
+
 using namespace winrt;
 using namespace Microsoft::UI::Xaml;
 
@@ -17,7 +20,11 @@ namespace winrt::Torroid::implementation
         InitializeComponent();
         FName().Text(fName);
         FSize().Text(fSize);
-        FUrl().Text(L"Dummyurl.com");
+
+        size_t index = Utils::FileName_to_Index(fName);
+        
+        FUrl().Text(winrt::to_hstring(DownloadsJson::jsonInstance().fileUrl(index)));
+        FStatus().Text(winrt::to_hstring(DownloadsJson::jsonInstance().fileStatus(index)));
     }
 
     int32_t PropertiesPage::MyProperty()
