@@ -127,5 +127,11 @@
         <ListView Grid.Row="1" x:Name="DownloadsLV" 
                   ItemTemplate="{StaticResource DownlodsLVTemplate}" 
                   SelectionMode="Single"/>
+        <ContentDialog x:Name="removeDownloadContentDialog"
+            PrimaryButtonText="Remove" CloseButtonText="Cancel" Title="Remove the selected Downloads">
+            <StackPanel>
+                <CheckBox x:Name="ConfirmFileDeletionCheckBox" Content="Remove File from the disk."/>
+            </StackPanel>
+        </ContentDialog>
     </Grid>
 </Page>
