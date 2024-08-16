@@ -2,9 +2,9 @@
 #include "DownloadFile.h"
 #include "DownloadsJson.h"
 #include "logging.h"
+#include "Utils.h"
 
 #include <filesystem>
-#include <winrt/Windows.Storage.h>
 
 int downloadEventCallback(aria2::Session* session, aria2::DownloadEvent event, const aria2::A2Gid gid, void* userData)
 {   
@@ -238,12 +238,14 @@ int DownloadFile::updateJson(aria2::A2Gid gid, std::string url)
     }
     handle = aria2::getDownloadHandle(session, gid); // Get download handle of a particular download
 
-    aria2::FileData filedata = handle->getFile(1); // local Path of file going to download
+    std::string filePath = handle->getFile(1).path; // local Path of file going to download
     int64_t iSize = handle->getTotalLength(); // file total size
     size = std::to_string(iSize);
     aria2::deleteDownloadHandle(handle); // delete handle
+    
+    std::replace(filePath.begin(), filePath.end(), '/', '\\');
 
-    DownloadsJson::jsonInstance().addDownloadToJson(filedata.path, size, url, std::to_string(gid));
+    DownloadsJson::jsonInstance().addDownloadToJson(filePath, size, url, std::to_string(gid));
 
     return EXIT_SUCCESS;
 }
