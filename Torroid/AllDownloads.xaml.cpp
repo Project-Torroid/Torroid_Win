@@ -108,7 +108,7 @@ namespace winrt::Torroid::implementation
             fontIcon.Glyph(L"\uF8AE");
         }
     }
-    void AllDownloads::PropertiesButton_Click(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::RoutedEventArgs const& e)
+
     void AllDownloads::PropertiesButton_Click(IInspectable const& sender, RoutedEventArgs const& e)
     {
         auto button = sender.as<Controls::MenuFlyoutItem>();
