@@ -7,7 +7,7 @@
 #include <sstream>
 #include "logging.h"
 
-std::string LogFilePath = "C:\\test\\torroid.log";
+std::string LogFilePath = "C:\\Torroid\\torroid.log";
 
 std::string Logging::current_datetime() {
     std::time_t now = std::time(nullptr);
@@ -44,18 +44,3 @@ void Logging::warning( std::string message)
     loggingfile << "[W] " << current_datetime() << " " << message << std::endl;
     loggingfile.close();
 }
-
-
-
-
-
-
-//int main()
-//{
-//    class Logging l1;
-//    l1.Error("error_log.txt", "This is error(fuck you buddy.....)");
-//    l1.Info("error_log.txt","This is info");
-//    l1.warning("error_log.txt","This is warning");
-//    l1.ForBuddy("error_log.txt","hi buddy");
-//    return EXIT_SUCCESS;
-//}

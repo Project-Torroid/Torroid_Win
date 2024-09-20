@@ -8,6 +8,7 @@ namespace Torroid
         Double DPercentage;
         String Size;
         String Speed;
+        String PauseResumeIcon;
         Boolean IsDownloading;
     }
 }

@@ -22,22 +22,23 @@
         <!-- AppTitleBar -->
         <Grid x:Name="AppTitleBar" Grid.Row="0" >
             <Grid.ColumnDefinitions>
-                <ColumnDefinition x:Name="LeftPaddingColumn" Width="10"/>
-                <ColumnDefinition/>
-                <ColumnDefinition x:Name="RightPaddingColumn" Width="0"/>
+                <ColumnDefinition x:Name="LeftPaddingColumn" Width="16"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition x:Name="RightPaddingColumn" Width="104"/>
             </Grid.ColumnDefinitions>
+
             <Image x:Name="TitleBarIcon" Source="ms-appx:///Assets/StoreLogo.png"
                 Grid.Column="1"
                 HorizontalAlignment="Left"
-                Width="18" Height="18"
-                Margin="8,0,0,0"/>
-            <TextBlock x:Name="TitleBarTextBlock" 
-                FontSize="16"
-                Text="Torroid Download Manager" 
+                Width="16" Height="16"
+                Margin="0,8"/>
+            <TextBlock x:Name="TitleBarText"
                 Style="{StaticResource CaptionTextBlockStyle}"
-                Grid.Column="1"
+                Grid.Column="2"
+                HorizontalAlignment="Left"
                 VerticalAlignment="Center"
-                Margin="42,0,0,0"/>
+                Margin="16,0"/>
         </Grid>
 
 

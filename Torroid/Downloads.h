@@ -27,6 +27,9 @@ namespace winrt::Torroid::implementation
         hstring Speed();
         void Speed(hstring const& value);
 
+        hstring PauseResumeIcon();
+        void PauseResumeIcon(hstring const& value);
+
         winrt::event_token PropertyChanged(winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventHandler const& handler);
         void PropertyChanged(winrt::event_token const& token) noexcept;
 
@@ -38,6 +41,7 @@ namespace winrt::Torroid::implementation
         hstring m_totalSize = L"0 MB";
         hstring m_size = L"Size: 0 Mb / " + m_totalSize;
         hstring m_speed = L"0 Mbps";
+        hstring m_pauseResumeIcon = L"\uF5B0"; // PlaySolid
         event<Microsoft::UI::Xaml::Data::PropertyChangedEventHandler> m_propertyChanged;
     };
 }

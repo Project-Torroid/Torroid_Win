@@ -27,9 +27,7 @@ namespace winrt::Torroid::implementation
     MainWindow::MainWindow() {
         this->InitializeComponent();
         this->ExtendsContentIntoTitleBar(true);
-        winrt::Microsoft::UI::Windowing::AppWindow appWindow = AppWindow();
-        winrt::Microsoft::UI::Windowing::AppWindowTitleBar titlebar = appWindow.TitleBar();
-        titlebar.PreferredHeightOption(winrt::Microsoft::UI::Windowing::TitleBarHeightOption::Standard);
+        TitleBarText().Text(Windows::ApplicationModel::AppInfo::Current().DisplayInfo().DisplayName());
 
         // default selected item for Navigation
         auto defaultNavSelection = MainWindowNav().MenuItems().GetAt(0).as<Controls::NavigationViewItem>();
